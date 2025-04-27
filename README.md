@@ -1,54 +1,147 @@
-# React + TypeScript + Vite
+# Alemana Print - Sitio Web de Serigrafía
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+![Alemana Print](public/vite.svg)
 
-Currently, two official plugins are available:
+## 🎨 Descripción
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Sitio web moderno y dinámico para Alemana Print, empresa especializada en servicios de serigrafía de alta calidad. El sitio está construido con tecnologías modernas y ofrece una experiencia de usuario inmersiva y responsive.
 
-## Expanding the ESLint configuration
+## ✨ Características Principales
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### 🏠 Página de Inicio (Hero Section)
+- Diseño moderno con animaciones fluidas
+- Logo 3D interactivo con efectos de hover
+- Fondo dinámico con efectos de partículas
+- Llamados a la acción prominentes
+- Totalmente responsive
+- Indicador de scroll animado
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+### 📱 Navegación
+- Menú responsive que se adapta a todos los dispositivos
+- Efecto de transparencia y blur al hacer scroll
+- Animaciones suaves en las transiciones
+- Menú móvil con animaciones de entrada/salida
+- Navegación suave entre secciones
+
+### 💼 Servicios
+- Cuatro servicios principales presentados con tarjetas interactivas
+- Iconos animados de FontAwesome
+- Efectos de hover y transiciones suaves
+- Fondos con gradientes dinámicos
+- Diseño grid responsive
+
+### 👥 Acerca de Nosotros
+- Historia de la empresa
+- Estadísticas animadas
+- Valores corporativos con iconos
+- Animaciones de entrada al scroll
+- Diseño modular y escalable
+
+### 📞 Contacto
+- Formulario interactivo con validación
+- Iconos integrados en los campos
+- Estados de carga y éxito/error
+- Información de contacto con iconos
+- Animaciones en los elementos del formulario
+
+### 👣 Pie de Página
+- Enlaces rápidos organizados por secciones
+- Iconos de redes sociales con animaciones
+- Horarios de atención
+- Información de contacto
+- Diseño responsive en grid
+
+## 🛠 Tecnologías Utilizadas
+
+### Frontend
+- React 18.2
+- TypeScript
+- Vite
+- Tailwind CSS
+- Framer Motion
+- Three.js / React Three Fiber
+- FontAwesome
+
+### Bibliotecas de Animación
+- Framer Motion para animaciones UI
+- React Three Fiber para gráficos 3D
+- Motion 3D para efectos tridimensionales
+
+### Estilizado
+- TailwindCSS para estilos responsive
+- PostCSS para procesamiento de CSS
+- Gradientes y efectos visuales personalizados
+
+### Optimización
+- Lazy loading de componentes
+- Optimización de imágenes
+- Manejo de errores con ErrorBoundary
+- Estados de carga para mejor UX
+
+## 🎨 Paleta de Colores
+- Primary (Púrpura): #4B0082
+- Secondary (Dorado): #DAA520
+- Accent (Rojo): #FF0000
+- Highlight (Amarillo): #FFFF00
+- Dark (Negro): #000000
+- Light (Blanco): #FFFFFF
+- Gray Light: #D3D3D3
+
+## 🔧 Instalación
+
+1. Clonar el repositorio:
+```bash
+git clone [url-del-repositorio]
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+2. Instalar dependencias:
+```bash
+npm install
 ```
+
+3. Ejecutar en modo desarrollo:
+```bash
+npm run dev
+```
+
+4. Construir para producción:
+```bash
+npm run build
+```
+
+## 📱 Responsive Design
+- Mobile First Design
+- Breakpoints personalizados
+- Menú adaptativo
+- Imágenes y contenido responsive
+- Grid y Flexbox layouts
+
+## ⚡ Performance
+- Optimización de recursos
+- Lazy loading de componentes
+- Manejo eficiente de estados
+- Animaciones optimizadas
+- Carga progresiva
+
+## 🔒 Seguridad
+- Validación de formularios
+- Sanitización de inputs
+- Protección contra XSS
+- Headers de seguridad
+- CORS configurado
+
+## 🔜 Próximas Mejoras
+- Integración con sistema de pagos
+- Galería de trabajos realizados
+- Blog de noticias y tutoriales
+- Sistema de cotización en línea
+- Panel de administración
+
+## 📄 Licencia
+Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE.md](LICENSE.md) para más detalles.
+
+## 👥 Equipo
+- Desarrollo Frontend
+- Diseño UI/UX
+- Optimización y Performance
+- Testing y QA

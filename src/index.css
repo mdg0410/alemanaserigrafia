@@ -1,12 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+#root {
+  width: 100%;
+}
+
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
-
   color-scheme: light dark;
+  scroll-behavior: smooth;
   color: rgba(255, 255, 255, 0.87);
   background-color: #242424;
-
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -28,6 +35,7 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  @apply bg-light text-dark m-0 p-0 min-h-screen;
 }
 
 h1 {
@@ -64,5 +72,39 @@ button:focus-visible {
   }
   button {
     background-color: #f9f9f9;
+  }
+}
+
+/* Utilidades personalizadas */
+@layer components {
+  .section {
+    @apply min-h-screen w-full px-4 md:px-8 py-16;
+  }
+  
+  .container-custom {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .btn-primary {
+    @apply bg-primary text-light px-6 py-2 rounded-lg hover:bg-opacity-90 transition-all duration-300;
+  }
+
+  .btn-secondary {
+    @apply bg-secondary text-dark px-6 py-2 rounded-lg hover:bg-opacity-90 transition-all duration-300;
+  }
+
+  .fade-in {
+    @apply opacity-0 animate-[fadeIn_1s_ease-in_forwards];
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
