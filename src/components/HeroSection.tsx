@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import LogoAlemana from '../assets/LogoAlemana.svg';
-import AlemanaTotal from '../assets/AlemanaTotal.png';
 import BrandsCarousel3D from './BrandsCarousel3D';
 
 const HeroSection = () => {
@@ -24,19 +23,8 @@ const HeroSection = () => {
       {/* Fondo con efecto de gradiente para mejorar el contraste y legibilidad */}
       <div className="absolute inset-0 bg-gradient-to-b from-black via-primary/40 to-black/90 z-10"></div>
       
-      {/* Imagen de fondo con optimización de accesibilidad */}
-      <div className="absolute inset-0 z-0" aria-hidden="true">
-        <img
-          src={AlemanaTotal}
-          alt=""
-          className="w-full h-full object-cover opacity-20"
-          style={{ objectPosition: 'center' }}
-          loading="eager"
-        />
-      </div>
-
-      {/* Carrusel 3D de marcas */}
-      <div aria-hidden="true">
+      {/* Carrusel 3D de marcas - Componente inmersivo único */}
+      <div aria-hidden="true" className="absolute inset-0 z-0">
         <BrandsCarousel3D />
       </div>
 

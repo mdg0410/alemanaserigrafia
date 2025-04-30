@@ -1,28 +1,43 @@
 import { useRef, useEffect, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { Text, useTexture, OrbitControls, useAspect } from '@react-three/drei';
+import { Text, useTexture, OrbitControls, Billboard } from '@react-three/drei';
 import { Group } from 'three';
 import gsap from 'gsap';
+
+// Importaciones de SVG en lugar de PNG
+import AlcoplastImg from '../assets/marcas/Alcoplast.svg';
+import ArchitexImg from '../assets/marcas/Architex.svg';
+import AvientImg from '../assets/marcas/Avient.svg';
+import KiwoImg from '../assets/marcas/Kiwo.svg';
+import PrintopImg from '../assets/marcas/Printop.svg';
+import UlanoImg from '../assets/marcas/Ulano.svg';
 
 const brands = [
   'Alcoplast', 'Architex', 'Avient', 
   'Kiwo', 'Printop', 'Ulano'
 ];
 
+// Mapeo de nombres de marcas a sus imágenes importadas
+const brandImagesMap = {
+  Alcoplast: AlcoplastImg,
+  Architex: ArchitexImg,
+  Avient: AvientImg,
+  Kiwo: KiwoImg,
+  Printop: PrintopImg,
+  Ulano: UlanoImg
+};
+
 // Componente optimizado para mejor rendimiento
 function BrandRing() {
   const groupRef = useRef<Group>(null);
   const [hoveredBrand, setHoveredBrand] = useState<string | null>(null);
   
-  // Cargar texturas de forma optimizada
-  const textures = useTexture({
-    Alcoplast: '/src/assets/Alcoplast.png',
-    Architex: '/src/assets/Architex.png',
-    Avient: '/src/assets/Avient.png',
-    Kiwo: '/src/assets/Kiwo.png',
-    Printop: '/src/assets/Printop.png',
-    Ulano: '/src/assets/Ulano.png'
-  });
+  // Cargar texturas de forma optimizada usando las importaciones directas
+  const textures = useTexture(
+    Object.fromEntries(
+      Object.entries(brandImagesMap).map(([key, value]) => [key, value])
+    )
+  );
 
   // Animación suave en cada frame
   useFrame(() => {
@@ -34,57 +49,57 @@ function BrandRing() {
 
   useEffect(() => {
     if (groupRef.current) {
-      // Animación inicial con GSAP para movimiento fluido
-      gsap.to(groupRef.current.rotation, {
-        y: Math.PI * 2,
-        duration: 25,
-        repeat: -1,
-        ease: "none"
-      });
+      // Configuración de la animación con GSAP
+      const target = groupRef.current.rotation;
+      if (target) {
+        gsap.to(target, {
+          y: Math.PI * 2,
+          duration: 30, // Más lento para que sea menos distractivo
+          repeat: -1,
+          ease: "none"
+        });
+      }
     }
 
     // Limpiar animación en desmontaje
     return () => {
-      gsap.killTweensOf(groupRef.current?.rotation);
+      if (groupRef.current && groupRef.current.rotation) {
+        gsap.killTweensOf(groupRef.current.rotation);
+      }
     };
   }, []);
+
+  // Aumentamos el radio del carrusel para que sea más grande
+  const radius = 7.5; // Ligeramente más grande
 
   return (
     <group ref={groupRef}>
       {brands.map((brand, index) => {
         const angle = (index / brands.length) * Math.PI * 2;
-        const radius = 5;
         const x = Math.sin(angle) * radius;
         const z = Math.cos(angle) * radius;
-        
+
         return (
           <group 
             key={brand} 
             position={[x, 0, z]} 
-            rotation={[0, -angle, 0]}
             onPointerOver={() => setHoveredBrand(brand)}
             onPointerOut={() => setHoveredBrand(null)}
           >
-            <mesh>
-              <planeGeometry args={[2, 1]} />
-              <meshBasicMaterial 
-                map={textures[brand as keyof typeof textures]}
-                transparent
-                opacity={hoveredBrand === brand ? 1 : 0.8}
-                color={hoveredBrand === brand ? "#ffffff" : "#dddddd"}
-              />
-            </mesh>
-            <Text
-              position={[0, -0.8, 0]}
-              fontSize={0.3}
-              color={hoveredBrand === brand ? "#DAA520" : "#b3b3b3"}
-              anchorX="center"
-              anchorY="middle"
-              outlineWidth={0.02}
-              outlineColor="#000000"
-            >
-              {brand}
-            </Text>
+            {/* Usamos Billboard para que siempre sea legible (no se ponga en espejo) */}
+            <Billboard follow={true} lockX={false} lockY={false} lockZ={false}>
+              <mesh>
+                <planeGeometry args={[3.2, 1.8]} /> {/* Ligeramente más grande */}
+                <meshBasicMaterial 
+                  map={textures[brand as keyof typeof textures]}
+                  transparent
+                  opacity={hoveredBrand === brand ? 1 : 0.9}
+                  color={hoveredBrand === brand ? "#ffffff" : "#f0f0f0"}
+                  side={2} // Material visible desde ambos lados
+                  depthWrite={false}
+                />
+              </mesh>
+            </Billboard>
           </group>
         );
       })}
@@ -96,16 +111,16 @@ function BrandRing() {
 function BackgroundStars() {
   return (
     <>
-      {Array.from({ length: 200 }).map((_, i) => {
-        const x = (Math.random() - 0.5) * 20;
-        const y = (Math.random() - 0.5) * 20;
-        const z = (Math.random() - 0.5) * 20;
+      {Array.from({ length: 250 }).map((_, i) => { // Más estrellas para un efecto más inmersivo
+        const x = (Math.random() - 0.5) * 40; 
+        const y = (Math.random() - 0.5) * 40; 
+        const z = (Math.random() - 0.5) * 40; 
         const size = Math.random() * 0.05 + 0.01;
         
         return (
           <mesh key={i} position={[x, y, z]}>
             <sphereGeometry args={[size, 8, 8]} />
-            <meshBasicMaterial color={Math.random() > 0.6 ? "#DAA520" : "#ffffff"} />
+            <meshBasicMaterial color={Math.random() > 0.7 ? "#DAA520" : "#ffffff"} />
           </mesh>
         );
       })}
@@ -146,27 +161,29 @@ const BrandsCarousel3D = () => {
   return (
     <div className="absolute inset-0 z-0" aria-hidden="true">
       <Canvas
-        camera={{ position: [0, 2, 10], fov: 60 }}
-        dpr={[1, 2]} // Optimización para diferentes densidades de píxel
-        performance={{ min: 0.5 }} // Para mejor rendimiento en dispositivos de baja gama
+        camera={{ position: [0, 1, 13.5], fov: 60 }} // Ajustamos la posición de la cámara un poco más alta
+        dpr={[1, 2]} 
+        performance={{ min: 0.5 }}
         gl={{ 
-          antialias: false, // Desactivar antialiasing para mejor rendimiento
+          antialias: true, // Activamos antialiasing para mejor calidad visual
           alpha: true, 
           powerPreference: 'high-performance' 
         }}
       >
         <color attach="background" args={['#000000']} />
-        <fog attach="fog" args={['#000000', 5, 15]} />
-        <ambientLight intensity={0.5} />
-        <pointLight position={[10, 10, 10]} intensity={0.5} />
+        <fog attach="fog" args={['#000000', 8, 20]} /> 
+        <ambientLight intensity={0.6} /> {/* Más luz ambiente */}
+        <pointLight position={[10, 10, 10]} intensity={0.6} /> {/* Más intensidad */}
         <BackgroundStars />
-        <BrandRing />
+        <group position={[0, 2, 0]}> {/* Posicionamos el carrusel más arriba */}
+          <BrandRing />
+        </group>
         <OrbitControls
           enableZoom={false}
           enablePan={false}
           minPolarAngle={Math.PI / 3}
-          maxPolarAngle={Math.PI / 1.5}
-          autoRotate={false} // Desactivamos ya que usamos GSAP para animación
+          maxPolarAngle={Math.PI / 1.8}
+          autoRotate={false}
           enableDamping
           dampingFactor={0.05}
         />
