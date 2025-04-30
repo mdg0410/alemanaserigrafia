@@ -5,6 +5,7 @@ import AboutSection from './components/AboutSection'
 import ServicesSection from './components/ServicesSection'
 import ContactSection from './components/ContactSection'
 import Footer from './components/Footer'
+import ChatBot from './components/ChatBot'
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
         <ContactSection />
       </main>
       <Footer />
+      <ChatBot />
     </div>
   )
 }

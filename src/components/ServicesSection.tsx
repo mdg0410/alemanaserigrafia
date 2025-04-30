@@ -1,140 +1,143 @@
+import { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { 
-  faTshirt, 
-  faPaintBrush, 
-  faIndustry, 
-  faPalette 
-} from '@fortawesome/free-solid-svg-icons';
+import ProductServiceModal from './ProductServiceModal';
+
+const services = [
+  {
+    title: 'Serigrafía Textil',
+    description: 'Impresión de alta calidad en todo tipo de prendas',
+    icon: '👕',
+    type: 'services',
+    ariaLabel: 'Servicio de Serigrafía Textil'
+  },
+  {
+    title: 'Productos Promocionales',
+    description: 'Artículos personalizados para tu marca',
+    icon: '🎯',
+    type: 'products',
+    ariaLabel: 'Productos Promocionales'
+  },
+  {
+    title: 'Diseño Gráfico',
+    description: 'Creación y adaptación de diseños para serigrafía',
+    icon: '🎨',
+    type: 'services',
+    ariaLabel: 'Servicio de Diseño Gráfico'
+  },
+  {
+    title: 'Materiales y Equipos',
+    description: 'Venta de insumos y equipamiento profesional',
+    icon: '🛠️',
+    type: 'products',
+    ariaLabel: 'Materiales y Equipos'
+  }
+];
 
 const ServicesSection = () => {
-  const services = [
-    {
-      title: "Serigrafía Textil",
-      description: "Impresión de alta calidad en todo tipo de prendas: camisetas, sudaderas, gorras y más.",
-      icon: faTshirt,
-      bgColor: "from-purple-600 to-pink-500"
-    },
-    {
-      title: "Serigrafía Publicitaria",
-      description: "Materiales promocionales, banners, carteles y señalización para tu negocio.",
-      icon: faPaintBrush,
-      bgColor: "from-blue-600 to-cyan-500"
-    },
-    {
-      title: "Serigrafía Industrial",
-      description: "Soluciones para etiquetado industrial, placas y componentes técnicos.",
-      icon: faIndustry,
-      bgColor: "from-orange-600 to-yellow-500"
-    },
-    {
-      title: "Serigrafía Artística",
-      description: "Reproducción de obras de arte y diseños personalizados en diversos materiales.",
-      icon: faPalette,
-      bgColor: "from-green-600 to-emerald-500"
-    }
-  ];
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalType, setModalType] = useState<'products' | 'services'>('products');
+  const [selectedCategory, setSelectedCategory] = useState<string>('');
+  // Referencia para foco después de cerrar el modal
+  const returnFocusRef = useRef<HTMLDivElement | null>(null);
 
-  const containerVariants = {
-    hidden: {},
-    visible: {
-      transition: {
-        staggerChildren: 0.2
-      }
-    }
-  };
-
-  const itemVariants = {
-    hidden: {
-      y: 20,
-      opacity: 0
-    },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: {
-        type: "spring",
-        stiffness: 100
-      }
-    }
+  const handleServiceClick = (type: 'products' | 'services', category: string, ref: React.RefObject<HTMLDivElement>) => {
+    setModalType(type);
+    setSelectedCategory(category);
+    setModalOpen(true);
+    returnFocusRef.current = ref.current;
   };
 
   return (
-    <section id="services" className="section bg-gradient-to-b from-dark to-primary text-light py-20">
-      <motion.div
-        className="container-custom"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: "-100px" }}
-        variants={containerVariants}
-      >
-        <div className="text-center mb-16">
-          <motion.h2 
-            className="text-4xl md:text-5xl font-bold mb-6"
-            initial={{ opacity: 0, y: -20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
-            Nuestros Servicios
-          </motion.h2>
-          <motion.p 
-            className="text-xl text-gray-300 max-w-2xl mx-auto"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
-            Ofrecemos soluciones profesionales de serigrafía para todas tus necesidades
-          </motion.p>
-        </div>
-
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {services.map((service, index) => (
-            <motion.div
-              key={service.title}
-              variants={itemVariants}
-              whileHover={{ scale: 1.05 }}
-              className="relative overflow-hidden rounded-xl bg-dark/30 backdrop-blur-sm"
-            >
-              <div className={`absolute inset-0 bg-gradient-to-br ${service.bgColor} opacity-10`} />
-              <div className="p-8 relative z-10">
-                <div className="text-4xl mb-6 text-secondary">
-                  <FontAwesomeIcon icon={service.icon} />
-                </div>
-                <h3 className="text-xl font-bold mb-4 text-secondary">
-                  {service.title}
-                </h3>
-                <p className="text-gray-300">
-                  {service.description}
-                </p>
-                <motion.button
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="mt-6 px-6 py-2 bg-secondary text-dark rounded-lg font-semibold hover:bg-secondary/90 transition-colors"
-                >
-                  Más información
-                </motion.button>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-
-        <motion.div 
-          className="text-center mt-16"
+    <section 
+      id="servicios" 
+      className="py-20 bg-gradient-to-b from-dark-soft to-primary-dark/20"
+      aria-labelledby="services-heading"
+    >
+      <div className="container-custom">
+        <motion.h2 
+          id="services-heading"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.4 }}
+          viewport={{ once: true, amount: 0.2 }}
+          className="text-3xl sm:text-4xl lg:text-5xl font-bold text-center text-white mb-8 md:mb-12"
         >
-          <a 
-            href="#contact" 
-            className="inline-block px-8 py-3 bg-secondary text-dark rounded-lg font-bold hover:bg-secondary/90 transition-colors"
-          >
-            Solicitar Cotización
-          </a>
-        </motion.div>
-      </motion.div>
+          Nuestros Servicios
+        </motion.h2>
+        
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 mb-16">
+          {services.map((service, index) => {
+            // Crear una ref para cada servicio
+            const cardRef = useRef<HTMLDivElement>(null);
+            
+            return (
+              <motion.div
+                key={service.title}
+                ref={cardRef}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.1 }}
+                transition={{ delay: index * 0.1 }}
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.98 }}
+                className="bg-gradient-to-br from-primary/20 to-dark-soft/70 backdrop-blur-sm 
+                  rounded-xl p-6 cursor-pointer group transform transition-all duration-300
+                  hover:shadow-lg hover:shadow-secondary/20 border border-secondary/10"
+                onClick={() => handleServiceClick(service.type as 'products' | 'services', service.title, cardRef)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    handleServiceClick(service.type as 'products' | 'services', service.title, cardRef);
+                  }
+                }}
+                tabIndex={0}
+                role="button"
+                aria-label={service.ariaLabel}
+                aria-haspopup="dialog"
+              >
+                <div 
+                  className="text-4xl sm:text-5xl mb-4 transform transition-transform 
+                    group-hover:scale-110 group-hover:rotate-12"
+                  aria-hidden="true"
+                >
+                  {service.icon}
+                </div>
+                <h3 className="text-xl font-semibold text-secondary mb-3 
+                  group-hover:text-white group-focus:text-white transition-colors">
+                  {service.title}
+                </h3>
+                <p className="text-gray-300 group-hover:text-white/90 
+                  group-focus:text-white/90 transition-colors">
+                  {service.description}
+                </p>
+                <div className="mt-4 flex items-center text-secondary 
+                  group-hover:text-white group-focus:text-white transition-colors">
+                  <span>Ver más</span>
+                  <svg 
+                    className="w-4 h-4 ml-2 transform transition-transform group-hover:translate-x-2" 
+                    fill="none" 
+                    viewBox="0 0 24 24" 
+                    stroke="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </div>
+              </motion.div>
+            );
+          })}
+        </div>
+
+        <ProductServiceModal 
+          isOpen={modalOpen}
+          onClose={() => {
+            setModalOpen(false);
+            // Devolver el foco al elemento que abrió el modal
+            setTimeout(() => returnFocusRef.current?.focus(), 100);
+          }}
+          type={modalType}
+          category={selectedCategory}
+        />
+      </div>
     </section>
   );
 };
