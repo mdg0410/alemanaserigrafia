@@ -70,7 +70,7 @@ function BrandRing() {
   }, []);
 
   // Aumentamos el radio del carrusel para que sea más grande
-  const radius = 7.5; // Ligeramente más grande
+  const radius = 7; // Ligeramente más grande
 
   return (
     <group ref={groupRef}>
@@ -89,7 +89,7 @@ function BrandRing() {
             {/* Usamos Billboard para que siempre sea legible (no se ponga en espejo) */}
             <Billboard follow={true} lockX={false} lockY={false} lockZ={false}>
               <mesh>
-                <planeGeometry args={[3.2, 1.8]} /> {/* Ligeramente más grande */}
+                <planeGeometry args={[6, 1.7]} /> {/* Ajustado a una relación de aspecto 3:1 */}
                 <meshBasicMaterial 
                   map={textures[brand as keyof typeof textures]}
                   transparent

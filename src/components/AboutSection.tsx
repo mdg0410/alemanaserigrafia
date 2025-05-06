@@ -253,7 +253,7 @@ const AboutSection = () => {
               <div className="text-4xl text-primary mb-4">
                 <FontAwesomeIcon icon={faRocket} />
               </div>
-              <h3 className="text-xl font-bold text-primary mb-2">Asesoramiento</h3>
+              <h3 className="text-xl font-bold text-sprimary mb-2">Asesoramiento</h3>
               <p className="text-gray-600">
                 Asesoramiento técnico personalizado para optimizar procesos de impresión.
               </p>
