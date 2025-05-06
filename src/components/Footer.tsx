@@ -48,7 +48,7 @@ const Footer = () => {
               className="text-2xl font-bold text-secondary mb-6"
               whileHover={{ scale: 1.05 }}
             >
-              Alemana Print
+              Alemana de Serigrafía
             </motion.h3>
             <div className="space-y-3">
               <p className="flex items-center gap-3">
@@ -61,7 +61,7 @@ const Footer = () => {
               </p>
               <p className="flex items-center gap-3">
                 <FontAwesomeIcon icon={faEnvelope} className="text-secondary" />
-                <span>contacto@alemanaprint.com</span>
+                <span>contacto@alemanaserigrafia.com</span>
               </p>
             </div>
           </motion.div>
@@ -158,7 +158,7 @@ const Footer = () => {
           transition={{ duration: 0.6, delay: 0.8 }}
         >
           <p className="text-gray-400">
-            © {new Date().getFullYear()} Alemana Print. Todos los derechos reservados.
+            © {new Date().getFullYear()} Alemana de Serigrafía. Todos los derechos reservados.
           </p>
         </motion.div>
       </div>

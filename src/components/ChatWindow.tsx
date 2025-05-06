@@ -10,7 +10,7 @@ interface ChatWindowProps {
 
 const ChatWindow = ({ onClose }: ChatWindowProps) => {
   const [messages, setMessages] = useState<ChatMessage[]>([
-    { role: 'assistant', content: "¡Hola! Soy el asistente virtual de Alemana Print. ¿En qué puedo ayudarte hoy?" }
+    { role: 'assistant', content: "¡Hola! Soy el asistente virtual de Alemana de Serigrafia. ¿En qué puedo ayudarte hoy?" }
   ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -102,7 +102,7 @@ const ChatWindow = ({ onClose }: ChatWindowProps) => {
             className="w-2 h-2 bg-secondary rounded-full animate-pulse" 
             aria-hidden="true"
           />
-          <h3 className="font-medium text-secondary" id="chat-title">Chat con Alemana Print</h3>
+          <h3 className="font-medium text-secondary" id="chat-title">Chat con Alemana de Serigrafia</h3>
         </div>
         <button 
           onClick={onClose} 

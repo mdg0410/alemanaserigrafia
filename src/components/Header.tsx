@@ -51,10 +51,10 @@ const Header = () => {
       <nav className="container mx-auto px-6" aria-label="Navegación principal">
         <div className="flex items-center justify-between">
           <div className="flex-shrink-0 flex items-center">
-            <a href="#inicio" aria-label="Inicio - Alemana Print">
+            <a href="#inicio" aria-label="Inicio - Alemana de Serigrafía">
               <img 
                 src={NombreAlemana} 
-                alt="Alemana Print" 
+                alt="Alemana de Serigrafía" 
                 className={`transition-all duration-500 object-contain
                   ${isScrolled ? 'h-16' : 'h-24'}`}
                 style={{

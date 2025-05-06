@@ -1,9 +1,9 @@
-# Alemana Print - Sitio Web Corporativo
+# Alemana de Serigrafía - Sitio Web Corporativo
 
-![Alemana Print](public/vite.svg)
+![Alemana de Serigrafía](public/vite.svg)
 
 ## 🎨 Descripción
-Sitio web corporativo moderno y de alto rendimiento para Alemana Print, empresa líder en servicios de serigrafía. Construido con React, TypeScript y las últimas tecnologías web para ofrecer una experiencia de usuario excepcional.
+Sitio web corporativo moderno y de alto rendimiento para Alemana de Serigrafía, empresa líder en servicios de serigrafía y distribución de insumos técnicos en Ecuador desde 1992. Construido con React, TypeScript y las últimas tecnologías web para ofrecer una experiencia de usuario excepcional.
 
 ## 🏗 Estructura del Proyecto
 ```

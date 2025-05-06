@@ -40,9 +40,9 @@ const Logo = () => {
         </mesh>
 
         {/* Texto 2D como alternativa al Text3D */}
-        <Html position={[-1.8, -2, 0]} center>
+        <Html position={[-2.8, -2, 0]} center>
           <div className="text-white text-2xl font-bold" style={{ whiteSpace: 'nowrap' }}>
-            ALEMANA
+            ALEMANA DE SERIGRAFÍA
           </div>
         </Html>
       </motion.group>
