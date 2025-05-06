@@ -1,50 +1,172 @@
 import { useState, useRef } from 'react';
-import { motion } from 'framer-motion';
-import ProductServiceModal from './ProductServiceModal';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const services = [
   {
-    title: 'Serigrafía Textil',
-    description: 'Impresión de alta calidad en todo tipo de prendas',
-    icon: '👕',
-    type: 'services',
-    ariaLabel: 'Servicio de Serigrafía Textil'
-  },
-  {
-    title: 'Productos Promocionales',
-    description: 'Artículos personalizados para tu marca',
-    icon: '🎯',
+    title: 'Insumos Técnicos',
+    description: 'Productos de alta calidad para serigrafía',
+    icon: '🧪',
     type: 'products',
-    ariaLabel: 'Productos Promocionales'
+    ariaLabel: 'Insumos Técnicos para Serigrafía',
+    items: [
+      {
+        subtitle: 'Emulsiones y Grabado',
+        details: ['Emulsiones fotosensibles', 'Sensibilizadores', 'Emulsionadores', 'Cintas adhesivas', 'Fotolitos'],
+        brands: ['Kiwo', 'Ulano']
+      },
+      {
+        subtitle: 'Tintas y Colorantes',
+        details: ['Tintas base agua', 'Plastisol', 'Tintas UV', 'Efectos especiales', 'Aditivos especializados'],
+        brands: ['Printop', 'Avient', 'Alcoplast', 'Architexminerva']
+      },
+      {
+        subtitle: 'Limpieza y Recuperación',
+        details: ['Desengrasantes', 'Removedores de tinta', 'Recuperadores de emulsión', 'Eliminadores de imágenes fantasma'],
+        brands: ['Albachem', 'Kiwo']
+      }
+    ]
   },
   {
-    title: 'Diseño Gráfico',
-    description: 'Creación y adaptación de diseños para serigrafía',
-    icon: '🎨',
-    type: 'services',
-    ariaLabel: 'Servicio de Diseño Gráfico'
-  },
-  {
-    title: 'Materiales y Equipos',
-    description: 'Venta de insumos y equipamiento profesional',
+    title: 'Herramientas y Equipos',
+    description: 'Equipamiento profesional para serigrafía',
     icon: '🛠️',
     type: 'products',
-    ariaLabel: 'Materiales y Equipos'
+    ariaLabel: 'Herramientas y Equipos de Serigrafía',
+    items: [
+      {
+        subtitle: 'Pantallas',
+        details: ['Marcos de madera y aluminio', 'Mallas de poliéster', 'Servicio de cambio de malla'],
+        brands: []
+      },
+      {
+        subtitle: 'Impresión y Soporte',
+        details: ['Racletas de poliuretano', 'Espátulas', 'Bisagras', 'Pulpos manuales', 'Mesas lineales'],
+        brands: []
+      },
+      {
+        subtitle: 'Consumibles',
+        details: ['Papel film', 'Guantes', 'Ropa de trabajo', 'Adhesivos para paletas'],
+        brands: []
+      }
+    ]
+  },
+  {
+    title: 'Servicios Técnicos',
+    description: 'Soluciones profesionales para tu taller',
+    icon: '⚙️',
+    type: 'services',
+    ariaLabel: 'Servicios Técnicos de Serigrafía',
+    items: [
+      {
+        subtitle: 'Impresión y Preprensa',
+        details: ['Impresión de fotolitos', 'Corte de vinil', 'Impresión DTF'],
+        brands: []
+      },
+      {
+        subtitle: 'Servicios de Pantalla',
+        details: ['Tensado neumático', 'Recuperación de marcos', 'Emulsionado y fotograbado'],
+        brands: []
+      },
+      {
+        subtitle: 'Colorimetría',
+        details: ['Preparación de colores Pantone', 'Asesoría técnica de tintas'],
+        brands: []
+      }
+    ]
+  },
+  {
+    title: 'Asesoría y Capacitación',
+    description: 'Formación especializada en serigrafía',
+    icon: '📚',
+    type: 'services',
+    ariaLabel: 'Asesoría y Capacitación en Serigrafía',
+    items: [
+      {
+        subtitle: 'Capacitación Técnica',
+        details: ['Cursos prácticos presenciales', 'Cursos online', 'Talleres especializados'],
+        brands: []
+      },
+      {
+        subtitle: 'Asesoramiento',
+        details: ['Consultoría técnica', 'Evaluación de procesos', 'Recomendaciones de materiales'],
+        brands: []
+      }
+    ]
   }
 ];
 
+const Modal = ({ isOpen, onClose, content, returnFocusRef }) => {
+  if (!isOpen) return null;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+    >
+      <motion.div
+        initial={{ scale: 0.95, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.95, opacity: 0 }}
+        className="bg-gradient-to-br from-dark-soft to-primary-dark/90 p-6 rounded-xl max-w-2xl w-full max-h-[80vh] overflow-y-auto"
+        onClick={e => e.stopPropagation()}
+      >
+        <div className="flex justify-between items-start mb-4">
+          <h3 className="text-2xl font-bold text-secondary">{content.title}</h3>
+          <button
+            onClick={onClose}
+            className="p-2 text-gray-400 hover:text-white transition-colors"
+            aria-label="Cerrar modal"
+          >
+            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        
+        <div className="space-y-6">
+          {content.items.map((item, index) => (
+            <div key={index} className="border-b border-secondary/20 pb-4 last:border-0">
+              <h4 className="text-xl font-semibold text-white mb-3">{item.subtitle}</h4>
+              <ul className="list-disc list-inside space-y-2 text-gray-300">
+                {item.details.map((detail, idx) => (
+                  <li key={idx}>{detail}</li>
+                ))}
+              </ul>
+              {item.brands && item.brands.length > 0 && (
+                <div className="mt-3">
+                  <p className="text-secondary font-medium">Marcas destacadas:</p>
+                  <p className="text-gray-300">{item.brands.join(', ')}</p>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+};
+
 const ServicesSection = () => {
   const [modalOpen, setModalOpen] = useState(false);
-  const [modalType, setModalType] = useState<'products' | 'services'>('products');
-  const [selectedCategory, setSelectedCategory] = useState<string>('');
-  // Referencia para foco después de cerrar el modal
+  const [selectedService, setSelectedService] = useState(null);
   const returnFocusRef = useRef<HTMLDivElement | null>(null);
 
-  const handleServiceClick = (type: 'products' | 'services', category: string, ref: React.RefObject<HTMLDivElement>) => {
-    setModalType(type);
-    setSelectedCategory(category);
+  const handleServiceClick = (service, ref: React.RefObject<HTMLDivElement>) => {
+    setSelectedService(service);
     setModalOpen(true);
     returnFocusRef.current = ref.current;
+  };
+
+  const handleCloseModal = () => {
+    setModalOpen(false);
+    if (returnFocusRef.current) {
+      returnFocusRef.current.focus();
+    }
   };
 
   return (
@@ -61,12 +183,50 @@ const ServicesSection = () => {
           viewport={{ once: true, amount: 0.2 }}
           className="text-3xl sm:text-4xl lg:text-5xl font-bold text-center text-white mb-8 md:mb-12"
         >
-          Nuestros Servicios
+          Productos y Servicios
         </motion.h2>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          className="max-w-4xl mx-auto mb-16 text-center"
+        >
+          <div className="bg-gradient-to-br from-primary/10 to-dark-soft/60 backdrop-blur-sm 
+            rounded-xl p-6 border border-secondary/10 shadow-lg">
+            <h3 className="text-xl sm:text-2xl font-semibold text-secondary mb-4">
+              Todo lo que necesitas para serigrafía en un solo lugar
+            </h3>
+            <div className="text-gray-300 space-y-4">
+              <p className="leading-relaxed">
+                Ofrecemos una amplia gama de productos indispensables para tu taller: 
+                <span className="text-white font-medium"> emulsiones fotosensibles, tintas textiles, 
+                tintas base agua, productos de limpieza, marcos, mallas </span> 
+                y todo el equipo necesario para serigrafía profesional.
+              </p>
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 mt-6">
+                <div className="flex items-center">
+                  <span className="text-2xl mr-2">🏪</span>
+                  <p className="text-sm">Pedidos pequeños</p>
+                </div>
+                <div className="flex items-center">
+                  <span className="text-2xl mr-2">🏬</span>
+                  <p className="text-sm">Medianos</p>
+                </div>
+                <div className="flex items-center">
+                  <span className="text-2xl mr-2">🏭</span>
+                  <p className="text-sm">Industriales</p>
+                </div>
+              </div>
+              <div className="mt-6 text-sm text-yellow-500/90 font-medium">
+                Nota: Por el momento no realizamos envíos. Solo venta presencial.
+              </div>
+            </div>
+          </div>
+        </motion.div>
         
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 mb-16">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
           {services.map((service, index) => {
-            // Crear una ref para cada servicio
             const cardRef = useRef<HTMLDivElement>(null);
             
             return (
@@ -82,11 +242,11 @@ const ServicesSection = () => {
                 className="bg-gradient-to-br from-primary/20 to-dark-soft/70 backdrop-blur-sm 
                   rounded-xl p-6 cursor-pointer group transform transition-all duration-300
                   hover:shadow-lg hover:shadow-secondary/20 border border-secondary/10"
-                onClick={() => handleServiceClick(service.type as 'products' | 'services', service.title, cardRef)}
+                onClick={() => handleServiceClick(service, cardRef)}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault();
-                    handleServiceClick(service.type as 'products' | 'services', service.title, cardRef);
+                    handleServiceClick(service, cardRef);
                   }
                 }}
                 tabIndex={0}
@@ -102,16 +262,15 @@ const ServicesSection = () => {
                   {service.icon}
                 </div>
                 <h3 className="text-xl font-semibold text-secondary mb-3 
-                  group-hover:text-white group-focus:text-white transition-colors">
+                  group-hover:text-white transition-colors">
                   {service.title}
                 </h3>
-                <p className="text-gray-300 group-hover:text-white/90 
-                  group-focus:text-white/90 transition-colors">
+                <p className="text-gray-300 group-hover:text-white/90 transition-colors">
                   {service.description}
                 </p>
                 <div className="mt-4 flex items-center text-secondary 
-                  group-hover:text-white group-focus:text-white transition-colors">
-                  <span>Ver más</span>
+                  group-hover:text-white transition-colors">
+                  <span>Ver detalles</span>
                   <svg 
                     className="w-4 h-4 ml-2 transform transition-transform group-hover:translate-x-2" 
                     fill="none" 
@@ -126,18 +285,18 @@ const ServicesSection = () => {
             );
           })}
         </div>
-
-        <ProductServiceModal 
-          isOpen={modalOpen}
-          onClose={() => {
-            setModalOpen(false);
-            // Devolver el foco al elemento que abrió el modal
-            setTimeout(() => returnFocusRef.current?.focus(), 100);
-          }}
-          type={modalType}
-          category={selectedCategory}
-        />
       </div>
+
+      <AnimatePresence>
+        {modalOpen && selectedService && (
+          <Modal
+            isOpen={modalOpen}
+            onClose={handleCloseModal}
+            content={selectedService}
+            returnFocusRef={returnFocusRef}
+          />
+        )}
+      </AnimatePresence>
     </section>
   );
 };
