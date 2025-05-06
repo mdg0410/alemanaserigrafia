@@ -1,195 +1,193 @@
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, memo } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { Text, useTexture, OrbitControls, Billboard } from '@react-three/drei';
+import { useTexture, OrbitControls, Billboard } from '@react-three/drei';
 import { Group } from 'three';
 import gsap from 'gsap';
+import { BRANDS_CONFIG, SCENE_CONFIG } from '../config/carousel3DConfig';
+import { useAccessibility } from '../hooks/useAccessibility';
 
-// Importaciones de SVG en lugar de PNG
-import AlcoplastImg from '../assets/marcas/Alcoplast.svg';
-import ArchitexImg from '../assets/marcas/Architex.svg';
-import AvientImg from '../assets/marcas/Avient.svg';
-import KiwoImg from '../assets/marcas/Kiwo.svg';
-import PrintopImg from '../assets/marcas/Printop.svg';
-import UlanoImg from '../assets/marcas/Ulano.svg';
+// Componente optimizado para renderizar una marca individual
+const BrandLogo = memo(({ 
+  brand, 
+  position, 
+  texture, 
+  isHovered, 
+  onHover,
+  reducedMotion
+}: { 
+  brand: string;
+  position: [number, number, number];
+  texture: THREE.Texture;
+  isHovered: boolean;
+  onHover: (brand: string | null) => void;
+  reducedMotion: boolean;
+}) => (
+  <group 
+    position={position}
+    onPointerOver={() => !reducedMotion && onHover(brand)}
+    onPointerOut={() => !reducedMotion && onHover(null)}
+  >
+    <Billboard follow={!reducedMotion} lockX={false} lockY={false} lockZ={false}>
+      <mesh>
+        <planeGeometry args={[6, 1.7]} />
+        <meshBasicMaterial 
+          map={texture}
+          transparent
+          opacity={isHovered ? 1 : 0.9}
+          color={isHovered ? "#ffffff" : "#f0f0f0"}
+          side={2}
+          depthWrite={false}
+        />
+      </mesh>
+    </Billboard>
+  </group>
+));
 
-const brands = [
-  'Alcoplast', 'Architex', 'Avient', 
-  'Kiwo', 'Printop', 'Ulano'
-];
+BrandLogo.displayName = 'BrandLogo';
 
-// Mapeo de nombres de marcas a sus imágenes importadas
-const brandImagesMap = {
-  Alcoplast: AlcoplastImg,
-  Architex: ArchitexImg,
-  Avient: AvientImg,
-  Kiwo: KiwoImg,
-  Printop: PrintopImg,
-  Ulano: UlanoImg
-};
+// Componente optimizado para las estrellas del fondo
+const BackgroundStars = memo(() => {
+  const stars = Array.from({ length: SCENE_CONFIG.stars.count }, (_, i) => ({
+    position: [
+      (Math.random() - 0.5) * SCENE_CONFIG.stars.spread,
+      (Math.random() - 0.5) * SCENE_CONFIG.stars.spread,
+      (Math.random() - 0.5) * SCENE_CONFIG.stars.spread
+    ] as [number, number, number],
+    size: Math.random() * (SCENE_CONFIG.stars.size.max - SCENE_CONFIG.stars.size.min) + SCENE_CONFIG.stars.size.min,
+    color: Math.random() > 0.7 ? SCENE_CONFIG.stars.colors.accent : SCENE_CONFIG.stars.colors.primary
+  }));
 
-// Componente optimizado para mejor rendimiento
-function BrandRing() {
+  return (
+    <>
+      {stars.map((star, i) => (
+        <mesh key={i} position={star.position}>
+          <sphereGeometry args={[star.size, 8, 8]} />
+          <meshBasicMaterial color={star.color} />
+        </mesh>
+      ))}
+    </>
+  );
+});
+
+BackgroundStars.displayName = 'BackgroundStars';
+
+// Componente principal del anillo de marcas
+const BrandRing = ({ reducedMotion }: { reducedMotion: boolean }) => {
   const groupRef = useRef<Group>(null);
   const [hoveredBrand, setHoveredBrand] = useState<string | null>(null);
-  
-  // Cargar texturas de forma optimizada usando las importaciones directas
-  const textures = useTexture(
-    Object.fromEntries(
-      Object.entries(brandImagesMap).map(([key, value]) => [key, value])
-    )
-  );
+  const textures = useTexture(BRANDS_CONFIG.brandImagesMap);
 
-  // Animación suave en cada frame
   useFrame(() => {
-    if (groupRef.current && !hoveredBrand) {
-      // Rotación más suave solo cuando no hay elemento hover
-      groupRef.current.rotation.y += 0.001;
+    if (groupRef.current && !hoveredBrand && !reducedMotion) {
+      groupRef.current.rotation.y += SCENE_CONFIG.ring.rotationSpeed;
     }
   });
 
   useEffect(() => {
-    if (groupRef.current) {
-      // Configuración de la animación con GSAP
-      const target = groupRef.current.rotation;
-      if (target) {
-        gsap.to(target, {
-          y: Math.PI * 2,
-          duration: 30, // Más lento para que sea menos distractivo
-          repeat: -1,
-          ease: "none"
-        });
-      }
-    }
+    if (!groupRef.current || reducedMotion) return;
 
-    // Limpiar animación en desmontaje
+    const animation = gsap.to(groupRef.current.rotation, {
+      y: Math.PI * 2,
+      duration: SCENE_CONFIG.ring.animationDuration,
+      repeat: -1,
+      ease: "none"
+    });
+
     return () => {
-      if (groupRef.current && groupRef.current.rotation) {
-        gsap.killTweensOf(groupRef.current.rotation);
-      }
+      animation.kill();
     };
-  }, []);
-
-  // Aumentamos el radio del carrusel para que sea más grande
-  const radius = 7; // Ligeramente más grande
+  }, [reducedMotion]);
 
   return (
     <group ref={groupRef}>
-      {brands.map((brand, index) => {
-        const angle = (index / brands.length) * Math.PI * 2;
-        const x = Math.sin(angle) * radius;
-        const z = Math.cos(angle) * radius;
+      {BRANDS_CONFIG.brands.map((brand, index) => {
+        const angle = (index / BRANDS_CONFIG.brands.length) * Math.PI * 2;
+        const position: [number, number, number] = [
+          Math.sin(angle) * SCENE_CONFIG.ring.radius,
+          0,
+          Math.cos(angle) * SCENE_CONFIG.ring.radius
+        ];
 
         return (
-          <group 
-            key={brand} 
-            position={[x, 0, z]} 
-            onPointerOver={() => setHoveredBrand(brand)}
-            onPointerOut={() => setHoveredBrand(null)}
-          >
-            {/* Usamos Billboard para que siempre sea legible (no se ponga en espejo) */}
-            <Billboard follow={true} lockX={false} lockY={false} lockZ={false}>
-              <mesh>
-                <planeGeometry args={[6, 1.7]} /> {/* Ajustado a una relación de aspecto 3:1 */}
-                <meshBasicMaterial 
-                  map={textures[brand as keyof typeof textures]}
-                  transparent
-                  opacity={hoveredBrand === brand ? 1 : 0.9}
-                  color={hoveredBrand === brand ? "#ffffff" : "#f0f0f0"}
-                  side={2} // Material visible desde ambos lados
-                  depthWrite={false}
-                />
-              </mesh>
-            </Billboard>
-          </group>
+          <BrandLogo
+            key={brand}
+            brand={brand}
+            position={position}
+            texture={textures[brand as keyof typeof BRANDS_CONFIG.brandImagesMap]}
+            isHovered={hoveredBrand === brand}
+            onHover={setHoveredBrand}
+            reducedMotion={reducedMotion}
+          />
         );
       })}
     </group>
   );
-}
+};
 
-// Componente optimizado para el fondo
-function BackgroundStars() {
-  return (
-    <>
-      {Array.from({ length: 250 }).map((_, i) => { // Más estrellas para un efecto más inmersivo
-        const x = (Math.random() - 0.5) * 40; 
-        const y = (Math.random() - 0.5) * 40; 
-        const z = (Math.random() - 0.5) * 40; 
-        const size = Math.random() * 0.05 + 0.01;
-        
-        return (
-          <mesh key={i} position={[x, y, z]}>
-            <sphereGeometry args={[size, 8, 8]} />
-            <meshBasicMaterial color={Math.random() > 0.7 ? "#DAA520" : "#ffffff"} />
-          </mesh>
-        );
-      })}
-    </>
-  );
-}
+// Componente de fallback para cuando WebGL no está disponible
+const FallbackDisplay = () => (
+  <div className="absolute inset-0 z-0 bg-gradient-to-b from-primary/30 to-dark" aria-hidden="true">
+    <div className="w-full h-full flex items-center justify-center">
+      <p className="sr-only">Fondo decorativo con logos de marcas</p>
+    </div>
+  </div>
+);
 
-// Componente principal con mejor manejo de accesibilidad
+// Componente principal con manejo de errores
 const BrandsCarousel3D = () => {
   const [mounted, setMounted] = useState(false);
   const [hasFailed, setHasFailed] = useState(false);
-  
-  // Manejo de carga y errores
+  const { preferences } = useAccessibility();
+
   useEffect(() => {
     setMounted(true);
-    
-    const handleError = () => {
-      setHasFailed(true);
-    };
-    
+    const handleError = () => setHasFailed(true);
     window.addEventListener('error', handleError);
-    return () => {
-      window.removeEventListener('error', handleError);
-    };
+    return () => window.removeEventListener('error', handleError);
   }, []);
 
-  // Si falla la carga o no es compatible, mostrar alternativa
   if (hasFailed || !mounted) {
-    return (
-      <div className="absolute inset-0 z-0 bg-gradient-to-b from-primary/30 to-dark" aria-hidden="true">
-        <div className="w-full h-full flex items-center justify-center">
-          <p className="sr-only">Fondo decorativo con logos de marcas</p>
-        </div>
-      </div>
-    );
+    return <FallbackDisplay />;
   }
 
   return (
     <div className="absolute inset-0 z-0" aria-hidden="true">
       <Canvas
-        camera={{ position: [0, 1, 13.5], fov: 60 }} // Ajustamos la posición de la cámara un poco más alta
-        dpr={[1, 2]} 
+        camera={{ position: SCENE_CONFIG.camera.position, fov: SCENE_CONFIG.camera.fov }}
+        dpr={[1, 2]}
         performance={{ min: 0.5 }}
         gl={{ 
-          antialias: true, // Activamos antialiasing para mejor calidad visual
-          alpha: true, 
-          powerPreference: 'high-performance' 
+          antialias: true,
+          alpha: true,
+          powerPreference: 'high-performance'
         }}
       >
         <color attach="background" args={['#000000']} />
-        <fog attach="fog" args={['#000000', 8, 20]} /> 
-        <ambientLight intensity={0.6} /> {/* Más luz ambiente */}
-        <pointLight position={[10, 10, 10]} intensity={0.6} /> {/* Más intensidad */}
+        <fog attach="fog" args={['#000000', 8, 20]} />
+        
+        <ambientLight intensity={SCENE_CONFIG.lights.ambient.intensity} />
+        <pointLight 
+          position={SCENE_CONFIG.lights.point.position} 
+          intensity={SCENE_CONFIG.lights.point.intensity} 
+        />
+        
         <BackgroundStars />
-        <group position={[0, 2, 0]}> {/* Posicionamos el carrusel más arriba */}
-          <BrandRing />
+        <group position={[0, 2, 0]}>
+          <BrandRing reducedMotion={preferences.prefersReducedMotion} />
         </group>
+        
         <OrbitControls
           enableZoom={false}
           enablePan={false}
-          minPolarAngle={Math.PI / 3}
-          maxPolarAngle={Math.PI / 1.8}
-          autoRotate={false}
-          enableDamping
-          dampingFactor={0.05}
+          minPolarAngle={SCENE_CONFIG.controls.minPolarAngle}
+          maxPolarAngle={SCENE_CONFIG.controls.maxPolarAngle}
+          autoRotate={!preferences.prefersReducedMotion}
+          enableDamping={!preferences.prefersReducedMotion}
+          dampingFactor={SCENE_CONFIG.controls.dampingFactor}
         />
       </Canvas>
     </div>
   );
 };
 
-export default BrandsCarousel3D;
+export default memo(BrandsCarousel3D);

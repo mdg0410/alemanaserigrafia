@@ -1,14 +1,65 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Alemana Serigrafía - Servicios profesionales de serigrafía e impresión" />
-    <title>Alemana Serigrafía</title>
+    <meta name="description" content="Alemana Serigrafía - Expertos en servicios profesionales de serigrafía e impresión desde 1992. Ofrecemos soluciones integrales para todas tus necesidades de impresión." />
+    <meta name="theme-color" content="#4B0082" />
+    <meta name="keywords" content="serigrafía, impresión, textil, productos promocionales, Ecuador" />
+    
+    <!-- Precargar recursos críticos -->
+    <link rel="preload" as="image" href="/src/assets/LogoAlemana.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    
+    <!-- Optimización de fuentes -->
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'" />
+    
+    <!-- Fallback para fuentes -->
+    <noscript>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />
+    </noscript>
+
+    <!-- PWA meta tags -->
+    <meta name="application-name" content="Alemana Print" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="apple-mobile-web-app-title" content="Alemana Print" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    
+    <title>Alemana Serigrafía | Expertos en Impresión</title>
+
+    <!-- Estilos críticos inline -->
+    <style>
+      /* Estilos mínimos para evitar CLS */
+      body {
+        margin: 0;
+        font-family: Inter, system-ui, -apple-system, sans-serif;
+      }
+      .loading {
+        width: 100%;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: #000;
+      }
+    </style>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <!-- Fallback para carga inicial -->
+      <div class="loading" role="status">
+        <img 
+          src="/src/assets/LogoAlemana.svg" 
+          alt="Cargando Alemana Print" 
+          style="width: 80px; height: 80px;"
+        />
+      </div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

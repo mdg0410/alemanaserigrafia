@@ -1,93 +1,56 @@
-# Alemana Print - Sitio Web de Serigrafía
+# Alemana Print - Sitio Web Corporativo
 
 ![Alemana Print](public/vite.svg)
 
 ## 🎨 Descripción
+Sitio web corporativo moderno y de alto rendimiento para Alemana Print, empresa líder en servicios de serigrafía. Construido con React, TypeScript y las últimas tecnologías web para ofrecer una experiencia de usuario excepcional.
 
-Sitio web moderno y dinámico para Alemana Print, empresa especializada en servicios de serigrafía de alta calidad. El sitio está construido con tecnologías modernas y ofrece una experiencia de usuario inmersiva y responsive.
+## 🏗 Estructura del Proyecto
+```
+src/
+  ├── components/         # Componentes React modulares
+  ├── config/            # Configuraciones centralizadas
+  ├── constants/         # Constantes y datos estáticos
+  ├── services/          # Servicios y lógica de negocio
+  ├── types/             # Definiciones de tipos TypeScript
+  └── assets/           # Recursos estáticos
+```
 
 ## ✨ Características Principales
 
-### 🏠 Página de Inicio (Hero Section)
-- Diseño moderno con animaciones fluidas
-- Logo 3D interactivo con efectos de hover
-- Fondo dinámico con efectos de partículas
-- Llamados a la acción prominentes
-- Totalmente responsive
-- Indicador de scroll animado
+### 🎯 Rendimiento Optimizado
+- Lazy loading de componentes y recursos
+- Optimización de renderizado con React.memo
+- Gestión eficiente de animaciones 3D
+- Configuraciones centralizadas para mejor mantenibilidad
+- Código limpio y modular
 
-### 📱 Navegación
-- Menú responsive que se adapta a todos los dispositivos
-- Efecto de transparencia y blur al hacer scroll
-- Animaciones suaves en las transiciones
-- Menú móvil con animaciones de entrada/salida
-- Navegación suave entre secciones
+### 🎨 Diseño Inmersivo
+- Hero Section con carrusel 3D interactivo
+- Animaciones fluidas con Framer Motion
+- Efectos visuales avanzados con Three.js
+- Diseño responsivo y adaptativo
+- Interfaz moderna y accesible
 
-### 💼 Servicios
-- Cuatro servicios principales presentados con tarjetas interactivas
-- Iconos animados de FontAwesome
-- Efectos de hover y transiciones suaves
-- Fondos con gradientes dinámicos
-- Diseño grid responsive
+### 🛠 Tecnologías
 
-### 👥 Acerca de Nosotros
-- Historia de la empresa
-- Estadísticas animadas
-- Valores corporativos con iconos
-- Animaciones de entrada al scroll
-- Diseño modular y escalable
-
-### 📞 Contacto
-- Formulario interactivo con validación
-- Iconos integrados en los campos
-- Estados de carga y éxito/error
-- Información de contacto con iconos
-- Animaciones en los elementos del formulario
-
-### 👣 Pie de Página
-- Enlaces rápidos organizados por secciones
-- Iconos de redes sociales con animaciones
-- Horarios de atención
-- Información de contacto
-- Diseño responsive en grid
-
-## 🛠 Tecnologías Utilizadas
-
-### Frontend
+#### Core
 - React 18.2
 - TypeScript
 - Vite
 - Tailwind CSS
+
+#### Animaciones y 3D
 - Framer Motion
 - Three.js / React Three Fiber
+- GSAP
+
+#### Utilidades
 - FontAwesome
+- EmailJS
+- OpenAI Integration
 
-### Bibliotecas de Animación
-- Framer Motion para animaciones UI
-- React Three Fiber para gráficos 3D
-- Motion 3D para efectos tridimensionales
-
-### Estilizado
-- TailwindCSS para estilos responsive
-- PostCSS para procesamiento de CSS
-- Gradientes y efectos visuales personalizados
-
-### Optimización
-- Lazy loading de componentes
-- Optimización de imágenes
-- Manejo de errores con ErrorBoundary
-- Estados de carga para mejor UX
-
-## 🎨 Paleta de Colores
-- Primary (Púrpura): #4B0082
-- Secondary (Dorado): #DAA520
-- Accent (Rojo): #FF0000
-- Highlight (Amarillo): #FFFF00
-- Dark (Negro): #000000
-- Light (Blanco): #FFFFFF
-- Gray Light: #D3D3D3
-
-## 🔧 Instalación
+## 🚀 Instalación y Uso
 
 1. Clonar el repositorio:
 ```bash
@@ -99,49 +62,66 @@ git clone [url-del-repositorio]
 npm install
 ```
 
-3. Ejecutar en modo desarrollo:
+3. Configurar variables de entorno:
+```bash
+cp .env.example .env
+# Editar .env con tus credenciales
+```
+
+4. Ejecutar en desarrollo:
 ```bash
 npm run dev
 ```
 
-4. Construir para producción:
+5. Construir para producción:
 ```bash
 npm run build
 ```
 
-## 📱 Responsive Design
-- Mobile First Design
-- Breakpoints personalizados
-- Menú adaptativo
-- Imágenes y contenido responsive
-- Grid y Flexbox layouts
+## 🎯 Optimizaciones Implementadas
 
-## ⚡ Performance
-- Optimización de recursos
-- Lazy loading de componentes
-- Manejo eficiente de estados
-- Animaciones optimizadas
-- Carga progresiva
+### Rendimiento
+- Memoización de componentes 3D
+- Lazy loading de módulos pesados
+- Optimización de texturas y modelos
+- Configuración centralizada para mejor mantenimiento
+
+### Accesibilidad
+- Estructura semántica mejorada
+- Labels y ARIA roles
+- Soporte para navegación por teclado
+- Fallbacks para características no soportadas
+
+### SEO
+- Meta tags optimizados
+- Estructura semántica
+- Rendimiento optimizado
+- Contenido accesible
+
+## 📱 Responsive Design
+- Mobile-first approach
+- Breakpoints optimizados
+- Adaptación de características 3D
+- Optimización de rendimiento móvil
 
 ## 🔒 Seguridad
-- Validación de formularios
 - Sanitización de inputs
-- Protección contra XSS
-- Headers de seguridad
-- CORS configurado
+- Protección XSS
+- Headers seguros
+- Manejo seguro de APIs
 
-## 🔜 Próximas Mejoras
-- Integración con sistema de pagos
-- Galería de trabajos realizados
-- Blog de noticias y tutoriales
-- Sistema de cotización en línea
-- Panel de administración
+## 👥 Contribución
+1. Fork el repositorio
+2. Crear rama de feature (`git checkout -b feature/MiFeature`)
+3. Commit cambios (`git commit -am 'Añadir nueva feature'`)
+4. Push a la rama (`git push origin feature/MiFeature`)
+5. Crear Pull Request
 
 ## 📄 Licencia
-Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE.md](LICENSE.md) para más detalles.
+Este proyecto está bajo la Licencia MIT - ver [LICENSE.md](LICENSE.md) para detalles
 
-## 👥 Equipo
-- Desarrollo Frontend
-- Diseño UI/UX
-- Optimización y Performance
-- Testing y QA
+## 🙏 Agradecimientos
+- Three.js por las herramientas 3D
+- React Three Fiber por la integración con React
+- Framer Motion por las animaciones fluidas
+- Tailwind por el sistema de diseño

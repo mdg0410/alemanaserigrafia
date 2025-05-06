@@ -27,6 +27,39 @@
   --scrollbar-thumb: rgba(75,0,130,0.5);
 }
 
+/* Estilos de accesibilidad */
+.high-contrast {
+  --primary: #6200B3;
+  --secondary: #FFD700;
+  --text-primary: #FFFFFF;
+  --text-secondary: #000000;
+  --bg-primary: #000000;
+  --bg-secondary: #FFFFFF;
+}
+
+.large-text {
+  font-size: 1.2rem;
+}
+
+.large-text h1 {
+  font-size: 3rem;
+}
+
+.large-text h2 {
+  font-size: 2.5rem;
+}
+
+.large-text h3 {
+  font-size: 2rem;
+}
+
+.large-text .btn-primary,
+.large-text .btn-secondary,
+.large-text .btn-outline {
+  font-size: 1.2rem;
+  padding: 1rem 2rem;
+}
+
 html {
   scroll-behavior: smooth;
   scroll-padding-top: 80px; /* Para compensar el header fijo */
@@ -93,10 +126,16 @@ button {
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
-    animation-duration: 0.001s !important;
+    animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
-    transition-duration: 0.001s !important;
+    transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+
+  .animate-bounce,
+  .animate-spin,
+  .animate-pulse {
+    animation: none !important;
   }
 }
 
@@ -114,20 +153,23 @@ button {
   .btn-primary {
     @apply bg-primary text-light px-6 py-2 rounded-lg hover:bg-primary-light 
       focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2
-      transition-all duration-300 font-medium inline-flex items-center justify-center;
+      transition-all duration-300 font-medium inline-flex items-center justify-center
+      disabled:opacity-50 disabled:cursor-not-allowed;
   }
 
   .btn-secondary {
     @apply bg-secondary text-dark px-6 py-2 rounded-lg hover:bg-secondary-dark hover:text-light
       focus:outline-none focus:ring-2 focus:ring-secondary focus:ring-offset-2
-      transition-all duration-300 font-medium inline-flex items-center justify-center;
+      transition-all duration-300 font-medium inline-flex items-center justify-center
+      disabled:opacity-50 disabled:cursor-not-allowed;
   }
   
   .btn-outline {
     @apply border-2 border-secondary text-white px-6 py-2 rounded-lg 
       hover:bg-secondary hover:text-dark focus:outline-none focus:ring-2
       focus:ring-secondary focus:ring-offset-2 transition-all duration-300
-      font-medium inline-flex items-center justify-center;
+      font-medium inline-flex items-center justify-center
+      disabled:opacity-50 disabled:cursor-not-allowed;
   }
 
   .fade-in {

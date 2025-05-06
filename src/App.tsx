@@ -1,11 +1,15 @@
-import './App.css'
-import Header from './components/Header'
-import HeroSection from './components/HeroSection'
-import AboutSection from './components/AboutSection'
-import ServicesSection from './components/ServicesSection'
-import ContactSection from './components/ContactSection'
-import Footer from './components/Footer'
-import ChatBot from './components/ChatBot'
+import { lazy, Suspense } from 'react';
+import './App.css';
+import Header from './components/Header';
+import HeroSection from './components/HeroSection';
+import LoadingSpinner from './components/LoadingSpinner';
+
+// Lazy loading para componentes pesados
+const AboutSection = lazy(() => import('./components/AboutSection'));
+const ServicesSection = lazy(() => import('./components/ServicesSection'));
+const ContactSection = lazy(() => import('./components/ContactSection'));
+const Footer = lazy(() => import('./components/Footer'));
+const ChatBot = lazy(() => import('./components/ChatBot'));
 
 function App() {
   return (
@@ -13,14 +17,20 @@ function App() {
       <Header />
       <main>
         <HeroSection />
-        <AboutSection />
-        <ServicesSection />
-        <ContactSection />
+        <Suspense fallback={<LoadingSpinner />}>
+          <AboutSection />
+          <ServicesSection />
+          <ContactSection />
+        </Suspense>
       </main>
-      <Footer />
-      <ChatBot />
+      <Suspense fallback={null}>
+        <Footer />
+      </Suspense>
+      <Suspense fallback={null}>
+        <ChatBot />
+      </Suspense>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
