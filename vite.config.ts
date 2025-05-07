@@ -4,16 +4,9 @@ import { resolve } from 'path';
 import viteImagemin from 'vite-plugin-imagemin';
 import viteCompression from 'vite-plugin-compression';
 
-// https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
-    react({
-      babel: {
-        parserOpts: {
-          plugins: ['importAssertions']
-        }
-      }
-    }),
+    react(),
     viteImagemin({
       gifsicle: {
         optimizationLevel: 7,
@@ -32,7 +25,8 @@ export default defineConfig({
       svgo: {
         plugins: [
           {
-            name: 'removeViewBox'
+            name: 'removeViewBox',
+            active: false
           },
           {
             name: 'removeEmptyAttrs',
@@ -49,10 +43,10 @@ export default defineConfig({
   ],
   build: {
     target: 'esnext',
-    minify: 'terser',
+    minify: 'esbuild', // Cambiando de terser a esbuild por ser más rápido y tener mejor soporte
     sourcemap: false,
     cssMinify: true,
-    chunkSizeWarningLimit: 1000,
+    assetsInlineLimit: 4096,
     rollupOptions: {
       output: {
         manualChunks: {
@@ -68,36 +62,30 @@ export default defineConfig({
           }
           return `assets/${extType}/[name]-[hash][extname]`;
         },
-        chunkFileNames: 'chunks/[name]-[hash].js',
-        entryFileNames: 'entries/[name]-[hash].js'
+        chunkFileNames: 'js/[name]-[hash].js',
+        entryFileNames: 'js/[name]-[hash].js'
       }
-    },
-    assetsInlineLimit: 4096
+    }
+  },
+  server: {
+    port: 3000,
+    cors: true,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Content-Type': 'application/javascript'
+    }
+  },
+  preview: {
+    port: 3000,
+    cors: true,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Content-Type': 'application/javascript'
+    }
   },
   resolve: {
     alias: {
       '@': resolve(__dirname, './src')
     }
-  },
-  optimizeDeps: {
-    include: ['react', 'react-dom', 'framer-motion', 'three'],
-    exclude: ['@emailjs/browser']
-  },
-  server: {
-    port: 3000,
-    host: true,
-    cors: true,
-    proxy: {
-      '/api': {
-        target: 'http://localhost:3000',
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, '')
-      }
-    }
-  },
-  preview: {
-    port: 3000,
-    host: true,
-    cors: true
   }
 });

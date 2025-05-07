@@ -2,14 +2,17 @@
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/src/assets/LogoAlemana.svg" />
+    <link rel="icon" type="image/svg+xml" href="/src/assets/LogoAlemana.svg" crossorigin="anonymous" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="Alemana de Serigrafía - Expertos en servicios de serigrafía, insumos técnicos y capacitación profesional en Ecuador desde 1992." />
     <meta name="theme-color" content="#4B0082" />
     <meta name="keywords" content="serigrafía, impresión textil, insumos serigráficos, capacitación serigrafía, Ecuador" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="X-Content-Type-Options" content="nosniff" />
     
     <!-- Precargar recursos críticos -->
-    <link rel="preload" as="image" href="/src/assets/LogoAlemana.svg" />
+    <link rel="preload" as="image" href="/src/assets/LogoAlemana.svg" type="image/svg+xml" crossorigin="anonymous" />
+    <link rel="modulepreload" href="/src/main.tsx" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     
@@ -57,6 +60,7 @@
           src="/src/assets/LogoAlemana.svg" 
           alt="Cargando Alemana de Serigrafía" 
           style="width: 80px; height: 80px;"
+          crossorigin="anonymous"
         />
       </div>
     </div>
