@@ -141,7 +141,7 @@ const ContactSection = () => {
 
       {/* Overlay para mejorar la legibilidad */}
       <div 
-        className="absolute inset-0 bg-black/50"
+        className="absolute inset-0 bg-black/30 backdrop-blur-[2px]"
         aria-hidden="true"
       />
 
@@ -233,10 +233,17 @@ const ContactSection = () => {
                         name={field.name}
                         value={formData[field.name as keyof typeof formData]}
                         onChange={handleChange}
-                        className={`w-full pl-10 pr-4 py-3 border rounded-lg transition-all focus:ring-2 focus:ring-primary focus:border-primary
+                        placeholder={
+                          field.name === 'name' ? 'Ej: Juan Pérez' :
+                          field.name === 'email' ? 'Ej: juan@ejemplo.com' :
+                          field.name === 'phone' ? 'Ej: +51 999 888 777' : ''
+                        }
+                        className={`w-full pl-10 pr-4 py-3 border rounded-lg transition-all
+                          bg-white/90 backdrop-blur-sm
+                          focus:ring-2 focus:ring-primary focus:border-primary focus:bg-white
                           ${formErrors[field.name] 
                             ? 'border-red-500 focus:border-red-500 focus:ring-red-200' 
-                            : 'border-gray-300'
+                            : 'border-gray-300 hover:border-gray-400'
                           }`}
                         aria-required={field.required}
                         aria-invalid={!!formErrors[field.name]}
@@ -274,21 +281,23 @@ const ContactSection = () => {
                       name="service"
                       value={formData.service}
                       onChange={handleChange}
-                      className={`w-full pl-10 pr-4 py-3 border rounded-lg appearance-none bg-white focus:ring-2 focus:ring-primary focus:border-primary
+                      className={`w-full pl-10 pr-4 py-3 border rounded-lg appearance-none
+                        bg-white/90 backdrop-blur-sm
+                        focus:ring-2 focus:ring-primary focus:border-primary focus:bg-white
                         ${formErrors.service 
                           ? 'border-red-500 focus:border-red-500 focus:ring-red-200' 
-                          : 'border-gray-300'
+                          : 'border-gray-300 hover:border-gray-400'
                         }`}
                       aria-required="true"
                       aria-invalid={!!formErrors.service}
                       aria-describedby={formErrors.service ? "service-error" : undefined}
                       required
                     >
-                      <option value="">Selecciona un servicio</option>
-                      <option value="textil">Serigrafía Textil</option>
-                      <option value="publicitaria">Serigrafía Publicitaria</option>
-                      <option value="industrial">Serigrafía Industrial</option>
-                      <option value="artistica">Serigrafía Artística</option>
+                      <option value="">Selecciona el tipo de servicio</option>
+                      <option value="textil">Serigrafía Textil - Estampados en telas</option>
+                      <option value="publicitaria">Serigrafía Publicitaria - Materiales promocionales</option>
+                      <option value="industrial">Serigrafía Industrial - Aplicaciones especializadas</option>
+                      <option value="artistica">Serigrafía Artística - Impresiones de arte</option>
                     </select>
                     {/* Flecha personalizada para el select */}
                     <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-500">
@@ -328,10 +337,13 @@ const ContactSection = () => {
                     value={formData.message}
                     onChange={handleChange}
                     rows={4}
-                    className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary focus:border-primary
+                    placeholder="Describe tu proyecto o consulta aquí. Por ejemplo: Necesito estampar 100 camisetas con mi logo empresarial..."
+                    className={`w-full pl-10 pr-4 py-3 border rounded-lg
+                      bg-white/90 backdrop-blur-sm
+                      focus:ring-2 focus:ring-primary focus:border-primary focus:bg-white
                       ${formErrors.message 
                         ? 'border-red-500 focus:border-red-500 focus:ring-red-200' 
-                        : 'border-gray-300'
+                        : 'border-gray-300 hover:border-gray-400'
                       }`}
                     aria-required="true"
                     aria-invalid={!!formErrors.message}
