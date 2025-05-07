@@ -11,6 +11,7 @@ import {
   faClock,
   faEnvelopeOpen
 } from '@fortawesome/free-solid-svg-icons';
+import serigrafiaBackground from '../assets/Contact/serigrafia-bg.png';
 
 const ContactSection = () => {
   const [formData, setFormData] = useState({
@@ -123,11 +124,29 @@ const ContactSection = () => {
 
   return (
     <section 
-      id="contacto" 
-      className="section py-20 bg-gradient-to-b from-light to-gray-100 relative overflow-hidden"
+      className="relative min-h-screen w-full"
       aria-labelledby="contact-heading"
     >
-      <div className="container-custom relative z-10">
+      {/* Imagen de fondo */}
+      <div 
+        className="absolute inset-0 w-full h-full"
+        style={{
+          backgroundImage: `url(${serigrafiaBackground})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat'
+        }}
+        aria-hidden="true"
+      />
+
+      {/* Overlay para mejorar la legibilidad */}
+      <div 
+        className="absolute inset-0 bg-black/50"
+        aria-hidden="true"
+      />
+
+      {/* Contenido */}
+      <div className="container-custom relative z-10 py-20">
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
@@ -139,7 +158,7 @@ const ContactSection = () => {
           <div className="text-center mb-12">
             <motion.h2
               id="contact-heading"
-              className="text-3xl sm:text-4xl lg:text-5xl font-bold text-primary mb-4"
+              className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4"
               initial={{ opacity: 0, y: -20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.1 }}
@@ -148,7 +167,7 @@ const ContactSection = () => {
               Contáctanos
             </motion.h2>
             <motion.p
-              className="text-xl text-gray-600 max-w-2xl mx-auto"
+              className="text-xl text-gray-200 max-w-2xl mx-auto"
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
@@ -163,7 +182,7 @@ const ContactSection = () => {
             {contactInfo.map((info, index) => (
               <motion.div
                 key={info.title}
-                className="text-center p-6 bg-white rounded-xl shadow-card hover:shadow-elevated transition-all duration-300"
+                className="text-center p-6 bg-white/10 backdrop-blur-md rounded-xl border border-white/20 shadow-lg hover:bg-white/20 transition-all duration-300"
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.1 }}
@@ -172,13 +191,13 @@ const ContactSection = () => {
                 aria-label={info.ariaLabel}
               >
                 <div 
-                  className="w-16 h-16 mx-auto rounded-full bg-primary/10 flex items-center justify-center text-primary text-2xl mb-4"
+                  className="w-16 h-16 mx-auto rounded-full bg-white/20 flex items-center justify-center text-white text-2xl mb-4"
                   aria-hidden="true"
                 >
                   <FontAwesomeIcon icon={info.icon} />
                 </div>
-                <h3 className="text-xl font-semibold text-primary mb-2">{info.title}</h3>
-                <p className="text-gray-600">{info.details}</p>
+                <h3 className="text-xl font-semibold text-white mb-2">{info.title}</h3>
+                <p className="text-gray-200">{info.details}</p>
               </motion.div>
             ))}
           </div>
@@ -189,9 +208,9 @@ const ContactSection = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.1 }}
             transition={{ duration: 0.6, delay: 0.4 }}
-            className="bg-white p-8 rounded-xl shadow-elevated"
+            className="bg-white/10 backdrop-blur-md p-8 rounded-xl border border-white/20 shadow-lg"
           >
-            <form onSubmit={handleSubmit} noValidate>
+            <form onSubmit={handleSubmit} noValidate className="space-y-6">
               <div className="grid md:grid-cols-2 gap-x-6 gap-y-5">
                 {formFields.map((field) => (
                   <div key={field.name} className="relative">
@@ -376,12 +395,6 @@ const ContactSection = () => {
           </motion.div>
         </motion.div>
       </div>
-
-      {/* Decoración de fondo */}
-      <div 
-        className="absolute inset-0 bg-gradient-to-b from-secondary/5 to-transparent pointer-events-none"
-        aria-hidden="true"
-      />
     </section>
   );
 };

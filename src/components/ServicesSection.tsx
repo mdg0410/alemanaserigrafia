@@ -1,5 +1,9 @@
 import { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import TecnicosImg from '../assets/About/Tecnicos.png';
+import CursoImg from '../assets/About/Curso.png';
+import SerigrafiaImg from '../assets/About/Serigrafia.png';
+import ProfesionalImg from '../assets/About/Profesional.png';
 
 const services = [
   {
@@ -8,6 +12,7 @@ const services = [
     icon: '🧪',
     type: 'products',
     ariaLabel: 'Insumos Técnicos para Serigrafía',
+    image: TecnicosImg,
     items: [
       {
         subtitle: 'Emulsiones y Grabado',
@@ -32,6 +37,7 @@ const services = [
     icon: '🛠️',
     type: 'products',
     ariaLabel: 'Herramientas y Equipos de Serigrafía',
+    image: SerigrafiaImg,
     items: [
       {
         subtitle: 'Pantallas',
@@ -56,6 +62,7 @@ const services = [
     icon: '⚙️',
     type: 'services',
     ariaLabel: 'Servicios Técnicos de Serigrafía',
+    image: ProfesionalImg,
     items: [
       {
         subtitle: 'Impresión y Preprensa',
@@ -80,6 +87,7 @@ const services = [
     icon: '📚',
     type: 'services',
     ariaLabel: 'Asesoría y Capacitación en Serigrafía',
+    image: CursoImg,
     items: [
       {
         subtitle: 'Capacitación Técnica',
@@ -172,10 +180,17 @@ const ServicesSection = () => {
   return (
     <section 
       id="servicios" 
-      className="py-20 bg-gradient-to-b from-dark-soft to-primary-dark/20"
+      className="relative py-20 overflow-hidden"
       aria-labelledby="services-heading"
     >
-      <div className="container-custom">
+      {/* Fondo decorativo con gradientes animados */}
+      <div className="absolute inset-0 bg-dark-soft">
+        <div className="absolute inset-0 opacity-30 bg-[radial-gradient(circle_at_20%_110%,_var(--tw-gradient-stops))] from-secondary via-transparent to-transparent blur-3xl" />
+        <div className="absolute inset-0 opacity-40 bg-[radial-gradient(circle_at_80%_-20%,_var(--tw-gradient-stops))] from-primary via-transparent to-transparent blur-3xl" />
+        <div className="absolute inset-0 bg-gradient-to-b from-dark-soft/90 via-primary/20 to-dark-soft" />
+      </div>
+
+      <div className="container-custom relative z-10">
         <motion.h2 
           id="services-heading"
           initial={{ opacity: 0, y: 20 }}
@@ -192,8 +207,9 @@ const ServicesSection = () => {
           viewport={{ once: true, amount: 0.2 }}
           className="max-w-4xl mx-auto mb-16 text-center"
         >
-          <div className="bg-gradient-to-br from-primary/10 to-dark-soft/60 backdrop-blur-sm 
-            rounded-xl p-6 border border-secondary/10 shadow-lg">
+          <div className="bg-gradient-to-br from-primary/20 via-dark-soft/60 to-primary/20 backdrop-blur-sm 
+            rounded-xl p-6 border border-secondary/20 shadow-lg hover:shadow-secondary/10 transition-shadow
+            hover:border-secondary/30">
             <h3 className="text-xl sm:text-2xl font-semibold text-secondary mb-4">
               Todo lo que necesitas para serigrafía en un solo lugar
             </h3>
@@ -239,9 +255,9 @@ const ServicesSection = () => {
                 transition={{ delay: index * 0.1 }}
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.98 }}
-                className="bg-gradient-to-br from-primary/20 to-dark-soft/70 backdrop-blur-sm 
-                  rounded-xl p-6 cursor-pointer group transform transition-all duration-300
-                  hover:shadow-lg hover:shadow-secondary/20 border border-secondary/10"
+                className="relative overflow-hidden bg-gradient-to-br from-primary/30 via-dark-soft/80 to-primary/20 
+                  backdrop-blur-sm rounded-xl cursor-pointer group transform transition-all duration-300
+                  hover:shadow-lg hover:shadow-secondary/20 border border-secondary/20 hover:border-secondary/40"
                 onClick={() => handleServiceClick(service, cardRef)}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' || e.key === ' ') {
@@ -254,32 +270,51 @@ const ServicesSection = () => {
                 aria-label={service.ariaLabel}
                 aria-haspopup="dialog"
               >
-                <div 
-                  className="text-4xl sm:text-5xl mb-4 transform transition-transform 
-                    group-hover:scale-110 group-hover:rotate-12"
-                  aria-hidden="true"
-                >
-                  {service.icon}
+                {/* Imagen de fondo con overlay */}
+                <div className="absolute inset-0 z-0">
+                  <img
+                    src={service.image}
+                    alt=""
+                    className="w-full h-full object-cover object-center transition-transform duration-500 
+                      group-hover:scale-110 opacity-20 group-hover:opacity-30"
+                    aria-hidden="true"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-dark-soft/90 via-primary/20 to-transparent" />
+                  
+                  {/* Efecto de brillo en hover */}
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-20 transition-opacity duration-500
+                    bg-gradient-to-r from-transparent via-secondary to-transparent blur-2xl" />
                 </div>
-                <h3 className="text-xl font-semibold text-secondary mb-3 
-                  group-hover:text-white transition-colors">
-                  {service.title}
-                </h3>
-                <p className="text-gray-300 group-hover:text-white/90 transition-colors">
-                  {service.description}
-                </p>
-                <div className="mt-4 flex items-center text-secondary 
-                  group-hover:text-white transition-colors">
-                  <span>Ver detalles</span>
-                  <svg 
-                    className="w-4 h-4 ml-2 transform transition-transform group-hover:translate-x-2" 
-                    fill="none" 
-                    viewBox="0 0 24 24" 
-                    stroke="currentColor"
+
+                {/* Contenido */}
+                <div className="relative z-10 p-6">
+                  <div 
+                    className="text-4xl sm:text-5xl mb-4 transform transition-transform 
+                      group-hover:scale-110 group-hover:rotate-12"
                     aria-hidden="true"
                   >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
+                    {service.icon}
+                  </div>
+                  <h3 className="text-xl font-semibold text-secondary mb-3 
+                    group-hover:text-white transition-colors">
+                    {service.title}
+                  </h3>
+                  <p className="text-gray-300 group-hover:text-white/90 transition-colors">
+                    {service.description}
+                  </p>
+                  <div className="mt-4 flex items-center text-secondary 
+                    group-hover:text-white transition-colors">
+                    <span>Ver detalles</span>
+                    <svg 
+                      className="w-4 h-4 ml-2 transform transition-transform group-hover:translate-x-2" 
+                      fill="none" 
+                      viewBox="0 0 24 24" 
+                      stroke="currentColor"
+                      aria-hidden="true"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </div>
                 </div>
               </motion.div>
             );

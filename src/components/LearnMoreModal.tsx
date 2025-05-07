@@ -7,6 +7,7 @@ import {
   faChartLine,
   faHandshake
 } from '@fortawesome/free-solid-svg-icons';
+import MasInformacion from '../assets/About/MasInformacion.png';
 
 interface LearnMoreModalProps {
   isOpen: boolean;
@@ -79,9 +80,14 @@ const LearnMoreModal = ({ isOpen, onClose }: LearnMoreModalProps) => {
           onClick={onClose}
         >
           <motion.div 
-            className="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto"
+            className="relative bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto"
             variants={modalVariants}
             onClick={(e) => e.stopPropagation()}
+            style={{
+              backgroundImage: `linear-gradient(to right, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.95)), url(${MasInformacion})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center'
+            }}
           >
             <div className="flex justify-between items-center border-b p-6">
               <h3 className="text-2xl font-bold text-primary">Sobre Alemana de Serigrafía</h3>

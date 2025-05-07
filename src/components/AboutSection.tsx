@@ -15,6 +15,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { useState } from 'react';
 import LearnMoreModal from './LearnMoreModal';
+import LogoAlemana from '../assets/LogoAlemana.svg';
 
 const AboutSection = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -74,9 +75,20 @@ const AboutSection = () => {
   };
 
   return (
-    <section id="about" className="section bg-gradient-to-b from-light to-gray-100">
+    <section id="about" className="section bg-gradient-to-b from-light to-gray-100 relative">
+      {/* Marca de agua del logo */}
+      <div 
+        className="absolute inset-0 pointer-events-none opacity-5 z-0"
+        style={{
+          backgroundImage: `url(${LogoAlemana})`,
+          backgroundRepeat: 'no-repeat',
+          backgroundPosition: 'center',
+          backgroundSize: '50%',
+        }}
+      />
+      
       <motion.div 
-        className="container-custom py-16"
+        className="container-custom py-16 relative z-10"
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, margin: "-100px" }}
@@ -203,63 +215,6 @@ const AboutSection = () => {
             ))}
           </motion.div>
         </div>
-        
-        {/* Nuestros Servicios */}
-        <motion.div 
-          className="mt-16 pt-8 border-t border-gray-200"
-          variants={containerVariants}
-        >
-          <motion.h2 
-            className="text-4xl font-bold text-primary text-center mb-12"
-            variants={itemVariants}
-          >
-            Nuestros Servicios
-          </motion.h2>
-          
-          <div className="grid md:grid-cols-3 gap-8">
-            <motion.div
-              className="p-6 bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow"
-              variants={itemVariants}
-              whileHover={{ scale: 1.05 }}
-            >
-              <div className="text-4xl text-primary mb-4">
-                <FontAwesomeIcon icon={faStar} />
-              </div>
-              <h3 className="text-xl font-bold text-primary mb-2">Distribución de Productos</h3>
-              <p className="text-gray-600">
-                Ofrecemos tintas y materiales de serigrafía de marcas líderes a nivel mundial.
-              </p>
-            </motion.div>
-            
-            <motion.div
-              className="p-6 bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow"
-              variants={itemVariants}
-              whileHover={{ scale: 1.05 }}
-            >
-              <div className="text-4xl text-primary mb-4">
-                <FontAwesomeIcon icon={faUsers} />
-              </div>
-              <h3 className="text-xl font-bold text-primary mb-2">Cursos y Talleres</h3>
-              <p className="text-gray-600">
-                Programas de capacitación y talleres especializados para mejorar las habilidades técnicas.
-              </p>
-            </motion.div>
-            
-            <motion.div
-              className="p-6 bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow"
-              variants={itemVariants}
-              whileHover={{ scale: 1.05 }}
-            >
-              <div className="text-4xl text-primary mb-4">
-                <FontAwesomeIcon icon={faRocket} />
-              </div>
-              <h3 className="text-xl font-bold text-sprimary mb-2">Asesoramiento</h3>
-              <p className="text-gray-600">
-                Asesoramiento técnico personalizado para optimizar procesos de impresión.
-              </p>
-            </motion.div>
-          </div>
-        </motion.div>
       </motion.div>
 
       {/* Modal de Conocer Más */}
