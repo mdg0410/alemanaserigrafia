@@ -43,7 +43,7 @@ export default defineConfig({
   ],
   build: {
     target: 'esnext',
-    minify: 'esbuild', // Cambiando de terser a esbuild por ser más rápido y tener mejor soporte
+    minify: 'esbuild',
     sourcemap: false,
     cssMinify: true,
     assetsInlineLimit: 4096,
@@ -55,8 +55,9 @@ export default defineConfig({
           utils: ['@fortawesome/fontawesome-svg-core', '@fortawesome/free-solid-svg-icons']
         },
         assetFileNames: (assetInfo) => {
-          const info = assetInfo.name.split('.');
-          let extType = info[info.length - 1];
+          const name = assetInfo?.name ?? '';
+          const info = name.split('.');
+          let extType = info.length > 1 ? info[info.length - 1] : '';
           if (/png|jpe?g|svg|gif|tiff|bmp|ico/i.test(extType)) {
             extType = 'img';
           }
@@ -66,21 +67,28 @@ export default defineConfig({
         entryFileNames: 'js/[name]-[hash].js'
       }
     }
-  },
-  server: {
+  },  server: {
     port: 3000,
+    host: true,
     cors: true,
+    strictPort: true,
     headers: {
       'Access-Control-Allow-Origin': '*',
-      'Content-Type': 'application/javascript'
-    }
-  },
-  preview: {
+      'X-Content-Type-Options': 'nosniff'
+    },
+    fs: {
+      strict: true,
+      allow: ['..']
+    },
+    middlewareMode: false
+  },  preview: {
     port: 3000,
+    host: true,
     cors: true,
+    strictPort: true,
     headers: {
       'Access-Control-Allow-Origin': '*',
-      'Content-Type': 'application/javascript'
+      'X-Content-Type-Options': 'nosniff'
     }
   },
   resolve: {
