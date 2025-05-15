@@ -94,24 +94,23 @@ const ContactSection = () => {
       });
     }
   };
-
   const contactInfo = [
     {
       icon: faMapMarkerAlt,
       title: "Ubicación",
-      details: "Calle Principal #123, Ciudad",
+      details: "Av. Eloy Alfaro, Quito 170144",
       ariaLabel: "Nuestra ubicación"
     },
     {
       icon: faClock,
       title: "Horario",
-      details: "Lun - Vie: 9:00 - 18:00",
+      details: "Lun - Vie: 8:00 - 17:30",
       ariaLabel: "Nuestro horario de atención"
     },
     {
       icon: faEnvelopeOpen,
       title: "Correo",
-      details: "contacto@alemanaprint.com",
+      details: "ventas1@inkgraph.net",
       ariaLabel: "Nuestro correo electrónico"
     }
   ];
@@ -233,10 +232,9 @@ const ContactSection = () => {
                         name={field.name}
                         value={formData[field.name as keyof typeof formData]}
                         onChange={handleChange}
-                        placeholder={
-                          field.name === 'name' ? 'Ej: Juan Pérez' :
+                        placeholder={                          field.name === 'name' ? 'Ej: Juan Pérez' :
                           field.name === 'email' ? 'Ej: juan@ejemplo.com' :
-                          field.name === 'phone' ? 'Ej: +51 999 888 777' : ''
+                          field.name === 'phone' ? 'Ej: +593 96 867 6893' : ''
                         }
                         className={`w-full pl-10 pr-4 py-3 border rounded-lg transition-all
                           bg-white/90 backdrop-blur-sm

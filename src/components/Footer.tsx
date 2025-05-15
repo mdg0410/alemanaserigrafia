@@ -8,15 +8,14 @@ import {
 import { 
   faFacebook, 
   faInstagram, 
-  faTwitter, 
+  faTiktok, 
   faLinkedin 
 } from '@fortawesome/free-brands-svg-icons';
 
-const Footer = () => {
-  const socialLinks = [
-    { icon: faFacebook, href: 'https://facebook.com', label: 'Facebook' },
-    { icon: faInstagram, href: 'https://instagram.com', label: 'Instagram' },
-    { icon: faTwitter, href: 'https://twitter.com', label: 'Twitter' },
+const Footer = () => {  const socialLinks = [
+    { icon: faFacebook, href: 'https://www.facebook.com/alemanadeserigrafia/', label: 'Facebook' },
+    { icon: faInstagram, href: 'https://www.instagram.com/alemana_serigrafia/', label: 'Instagram' },
+    { icon: faTiktok, href: 'https://www.tiktok.com/@alemana_serigrafia', label: 'TikTok' },
     { icon: faLinkedin, href: 'https://linkedin.com', label: 'LinkedIn' }
   ];
 
@@ -49,19 +48,18 @@ const Footer = () => {
               whileHover={{ scale: 1.05 }}
             >
               Alemana de Serigrafía
-            </motion.h3>
-            <div className="space-y-3">
+            </motion.h3>            <div className="space-y-3">
               <p className="flex items-center gap-3">
                 <FontAwesomeIcon icon={faMapMarkerAlt} className="text-secondary" />
-                <span>Calle Principal #123</span>
+                <span>Av. Eloy Alfaro, Quito 170144</span>
               </p>
               <p className="flex items-center gap-3">
                 <FontAwesomeIcon icon={faPhone} className="text-secondary" />
-                <span>(123) 456-7890</span>
+                <span>+593 96 867 6893 / +593 98 611 2559</span>
               </p>
               <p className="flex items-center gap-3">
                 <FontAwesomeIcon icon={faEnvelope} className="text-secondary" />
-                <span>contacto@alemanaserigrafia.com</span>
+                <span>ventas1@inkgraph.net</span>
               </p>
             </div>
           </motion.div>
@@ -102,11 +100,10 @@ const Footer = () => {
           >
             <h3 className="text-2xl font-bold text-secondary mb-6">
               Horario de Atención
-            </h3>
-            <ul className="space-y-3">
+            </h3>            <ul className="space-y-3">
               <li className="flex justify-between">
                 <span>Lunes - Viernes:</span>
-                <span className="text-secondary">9:00 - 18:00</span>
+                <span className="text-secondary">8:00 - 17:30</span>
               </li>
               <li className="flex justify-between">
                 <span>Sábado:</span>
