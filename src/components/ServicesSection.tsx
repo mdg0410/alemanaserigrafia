@@ -5,6 +5,14 @@ import CursoImg from '../assets/About/Curso.png';
 import SerigrafiaImg from '../assets/About/Serigrafia.png';
 import ProfesionalImg from '../assets/About/Profesional.png';
 
+// Importamos los logos SVG de las marcas
+import KiwoLogo from '../assets/marcas/Kiwo.svg';
+import UlanoLogo from '../assets/marcas/Ulano.svg';
+import PrintopLogo from '../assets/marcas/Printop.svg';
+import AvientLogo from '../assets/marcas/Avient.svg';
+import AlcoplastLogo from '../assets/marcas/Alcoplast.svg';
+import ArchitexLogo from '../assets/marcas/Architex.svg';
+
 const services = [
   {
     title: 'Insumos Técnicos',
@@ -13,21 +21,34 @@ const services = [
     type: 'products',
     ariaLabel: 'Insumos Técnicos para Serigrafía',
     image: TecnicosImg,
-    items: [
-      {
+    items: [      {
         subtitle: 'Emulsiones y Grabado',
         details: ['Emulsiones fotosensibles', 'Sensibilizadores', 'Emulsionadores', 'Cintas adhesivas', 'Fotolitos'],
-        brands: ['Kiwo', 'Ulano']
+        brands: ['Kiwo', 'Ulano'],
+        brandLogos: [
+          { name: 'Kiwo', logo: KiwoLogo },
+          { name: 'Ulano', logo: UlanoLogo }
+        ]
       },
       {
         subtitle: 'Tintas y Colorantes',
         details: ['Pigmentos base agua', 'Tintas plastisol', 'Tintas UV', 'Efectos especiales', 'Aditivos especializados'],
-        brands: ['Printop', 'Avient', 'Alcoplast', 'Architexminerva']
+        brands: ['Printop', 'Avient', 'Alcoplast', 'Architex'],
+        brandLogos: [
+          { name: 'Printop', logo: PrintopLogo },
+          { name: 'Avient', logo: AvientLogo },
+          { name: 'Alcoplast', logo: AlcoplastLogo },
+          { name: 'Architex', logo: ArchitexLogo }
+        ]
       },
       {
         subtitle: 'Limpieza y Recuperación',
         details: ['Desengrasantes', 'Removedores de tinta', 'Recuperadores de emulsión', 'Eliminadores de imágenes fantasma'],
-        brands: ['Albachem', 'Kiwo']
+        brands: ['Albachem', 'Kiwo'],
+        brandLogos: [
+          { name: 'Kiwo', logo: KiwoLogo }
+          // Nota: Albachem no tiene logo SVG disponible, se mantiene como texto
+        ]
       }
     ]
   },
@@ -103,7 +124,37 @@ const services = [
   }
 ];
 
-const Modal = ({ isOpen, onClose, content, returnFocusRef }) => {
+// Definir tipos para facilitar el mantenimiento
+interface Brand {
+  name: string;
+  logo: string;
+}
+
+interface ServiceItem {
+  subtitle: string;
+  details: string[];
+  brands?: string[];
+  brandLogos?: Brand[];
+}
+
+interface Service {
+  title: string;
+  description: string;
+  icon: string;
+  type: string;
+  ariaLabel: string;
+  image: string;
+  items: ServiceItem[];
+}
+
+interface ModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  content: Service;
+  returnFocusRef: React.RefObject<HTMLDivElement>;
+}
+
+const Modal = ({ isOpen, onClose, content, returnFocusRef }: ModalProps) => {
   if (!isOpen) return null;
 
   return (
@@ -144,11 +195,31 @@ const Modal = ({ isOpen, onClose, content, returnFocusRef }) => {
                 {item.details.map((detail, idx) => (
                   <li key={idx}>{detail}</li>
                 ))}
-              </ul>
-              {item.brands && item.brands.length > 0 && (
+              </ul>              {item.brands && item.brands.length > 0 && (
                 <div className="mt-3">
-                  <p className="text-secondary font-medium">Marcas destacadas:</p>
-                  <p className="text-gray-300">{item.brands.join(', ')}</p>
+                  <p className="text-secondary font-medium mb-2">Marcas destacadas:</p>
+                  {item.brandLogos ? (
+                    <div className="flex flex-wrap gap-3 items-center">
+                      {item.brandLogos.map((brand, brandIdx) => (
+                        <div key={brandIdx} className="bg-white/10 rounded-md px-2 py-1 flex items-center justify-center">
+                          <img 
+                            src={brand.logo} 
+                            alt={brand.name} 
+                            className="h-5 w-auto object-contain" 
+                            title={brand.name}
+                          />
+                        </div>
+                      ))}
+                      {/* Mostrar marcas sin logo como texto */}
+                      {item.brands.filter(brand => !item.brandLogos?.some(b => b.name === brand)).map((brand, idx) => (
+                        <span key={`text-${idx}`} className="text-gray-300 bg-white/5 px-2 py-1 rounded">
+                          {brand}
+                        </span>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-gray-300">{item.brands.join(', ')}</p>
+                  )}
                 </div>
               )}
             </div>
