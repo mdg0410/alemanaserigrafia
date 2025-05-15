@@ -179,7 +179,7 @@ const ServicesSection = () => {
 
   return (
     <section 
-      id="servicios" 
+      id="services" 
       className="relative py-20 overflow-hidden"
       aria-labelledby="services-heading"
     >

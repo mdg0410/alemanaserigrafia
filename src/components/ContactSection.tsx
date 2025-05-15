@@ -120,9 +120,9 @@ const ContactSection = () => {
     { name: 'email', label: 'Correo electrónico', icon: faEnvelope, type: 'email', required: true },
     { name: 'phone', label: 'Teléfono', icon: faPhone, type: 'tel', required: false }
   ];
-
   return (
     <section 
+      id="contact"
       className="relative min-h-screen w-full"
       aria-labelledby="contact-heading"
     >

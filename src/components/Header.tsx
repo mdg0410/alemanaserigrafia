@@ -51,7 +51,7 @@ const Header = () => {
       <nav className="container mx-auto px-6" aria-label="Navegación principal">
         <div className="flex items-center justify-between">
           <div className="flex-shrink-0 flex items-center">
-            <a href="#inicio" aria-label="Inicio - Alemana de Serigrafía">
+            <a href="#hero" aria-label="Inicio - Alemana de Serigrafía">
               <img 
                 src={NombreAlemana} 
                 alt="Alemana de Serigrafía" 
@@ -65,14 +65,12 @@ const Header = () => {
                 }}
               />
             </a>
-          </div>
-
-          {/* Menú de navegación */}
+          </div>          {/* Menú de navegación */}
           <div className="hidden md:flex items-center space-x-8">
-            <NavLink href="#inicio">Inicio</NavLink>
-            <NavLink href="#servicios">Servicios</NavLink>
-            <NavLink href="#nosotros">Nosotros</NavLink>
-            <NavLink href="#contacto">Contacto</NavLink>
+            <NavLink href="#hero">Inicio</NavLink>
+            <NavLink href="#about">Nosotros</NavLink>
+            <NavLink href="#services">Servicios</NavLink>
+            <NavLink href="#contact">Contacto</NavLink>
           </div>
 
           {/* Botón de menú móvil con mayor accesibilidad */}
@@ -95,18 +93,17 @@ const Header = () => {
           </button>
         </div>
 
-        {/* Menú móvil con mejor accesibilidad */}
-        <div 
+        {/* Menú móvil con mejor accesibilidad */}        <div 
           id="mobile-menu"
           className={`md:hidden transition-all duration-300 overflow-hidden 
             ${isMenuOpen ? 'max-h-64 opacity-100' : 'max-h-0 opacity-0'}`}
           aria-hidden={!isMenuOpen}
         >
           <div className="py-4 space-y-2">
-            <MobileNavLink href="#inicio" onClick={() => setIsMenuOpen(false)}>Inicio</MobileNavLink>
-            <MobileNavLink href="#servicios" onClick={() => setIsMenuOpen(false)}>Servicios</MobileNavLink>
-            <MobileNavLink href="#nosotros" onClick={() => setIsMenuOpen(false)}>Nosotros</MobileNavLink>
-            <MobileNavLink href="#contacto" onClick={() => setIsMenuOpen(false)}>Contacto</MobileNavLink>
+            <MobileNavLink href="#hero" onClick={() => setIsMenuOpen(false)}>Inicio</MobileNavLink>
+            <MobileNavLink href="#about" onClick={() => setIsMenuOpen(false)}>Nosotros</MobileNavLink>
+            <MobileNavLink href="#services" onClick={() => setIsMenuOpen(false)}>Servicios</MobileNavLink>
+            <MobileNavLink href="#contact" onClick={() => setIsMenuOpen(false)}>Contacto</MobileNavLink>
           </div>
         </div>
       </nav>

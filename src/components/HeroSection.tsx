@@ -58,7 +58,7 @@ const ActionButtons = ({ reducedMotion }: { reducedMotion: boolean }) => (
     transition={{ delay: reducedMotion ? 0 : 0.7 }}
   >
     <motion.a
-      href="#servicios"
+      href="#services"
       className="btn-primary px-8 py-3 text-lg"
       variants={buttonHoverVariants}
       whileHover={reducedMotion ? undefined : "hover"}
@@ -67,8 +67,7 @@ const ActionButtons = ({ reducedMotion }: { reducedMotion: boolean }) => (
     >
       Nuestros Servicios
     </motion.a>
-    <motion.a
-      href="#contacto"
+    <motion.a      href="#contact"
       className="btn-outline px-8 py-3 text-lg"
       variants={buttonHoverVariants}
       whileHover={reducedMotion ? undefined : "hover"}
@@ -91,7 +90,7 @@ const HeroSection = () => {
 
   return (
     <section 
-      id="inicio" 
+      id="hero" 
       className="relative min-h-screen flex items-center justify-center pt-24 pb-20 overflow-hidden"
       aria-label="Sección de inicio"
     >
