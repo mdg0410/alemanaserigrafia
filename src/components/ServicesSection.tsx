@@ -21,7 +21,7 @@ const services = [
       },
       {
         subtitle: 'Tintas y Colorantes',
-        details: ['Tintas base agua', 'Plastisol', 'Tintas UV', 'Efectos especiales', 'Aditivos especializados'],
+        details: ['Pigmentos base agua', 'Tintas plastisol', 'Tintas UV', 'Efectos especiales', 'Aditivos especializados'],
         brands: ['Printop', 'Avient', 'Alcoplast', 'Architexminerva']
       },
       {
@@ -91,7 +91,7 @@ const services = [
     items: [
       {
         subtitle: 'Capacitación Técnica',
-        details: ['Cursos prácticos presenciales', 'Cursos online', 'Talleres especializados'],
+        details: ['Cursos prácticos presenciales', 'Asesorias personalizadas', 'Talleres especializados'],
         brands: []
       },
       {
@@ -217,7 +217,7 @@ const ServicesSection = () => {
               <p className="leading-relaxed">
                 Ofrecemos una amplia gama de productos indispensables para tu taller: 
                 <span className="text-white font-medium"> emulsiones fotosensibles, tintas textiles, 
-                tintas base agua, productos de limpieza, marcos, mallas </span> 
+                tintas plastisoles, auxiliares serigráficos, marcos, mallas </span> 
                 y todo el equipo necesario para serigrafía profesional.
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 mt-6">
@@ -235,7 +235,7 @@ const ServicesSection = () => {
                 </div>
               </div>
               <div className="mt-6 text-sm text-yellow-500/90 font-medium">
-                Nota: Por el momento no realizamos envíos. Solo venta presencial.
+                <p>¡Envios a todo el Ecuador!</p>
               </div>
             </div>
           </div>

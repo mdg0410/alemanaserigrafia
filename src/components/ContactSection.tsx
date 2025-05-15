@@ -12,6 +12,12 @@ import {
   faEnvelopeOpen
 } from '@fortawesome/free-solid-svg-icons';
 import serigrafiaBackground from '../assets/Contact/serigrafia-bg.png';
+import { 
+  isMobileDevice, 
+  formatWhatsAppMessage, 
+  getEmailSubject, 
+  formatEmailBody 
+} from '../utils/deviceDetection';
 
 const ContactSection = () => {
   const [formData, setFormData] = useState({
@@ -51,6 +57,16 @@ const ContactSection = () => {
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
   };
+  // Números de WhatsApp para contacto (sin el +)
+  const WHATSAPP_NUMBERS = ['593968676893', '593986112559'];
+  // Correo electrónico de contacto
+  const CONTACT_EMAIL = 'ventas1@inkgraph.net';
+
+  // Función para obtener un número de WhatsApp aleatorio
+  const getRandomWhatsAppNumber = (): string => {
+    const randomIndex = Math.floor(Math.random() * WHATSAPP_NUMBERS.length);
+    return WHATSAPP_NUMBERS[randomIndex];
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -60,9 +76,26 @@ const ContactSection = () => {
     setIsSubmitting(true);
     
     try {
-      // Simular envío del formulario (aquí iría la lógica real de envío)
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      // Esperar un poco para simular procesamiento
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Detectar si el usuario está en móvil o escritorio
+      if (isMobileDevice()) {
+        // Envía a WhatsApp con un número aleatorio
+        const randomNumber = getRandomWhatsAppNumber();
+        const whatsappMessage = formatWhatsAppMessage(formData);
+        window.open(`https://wa.me/${randomNumber}?text=${whatsappMessage}`, '_blank');
+      } else {
+        // Envía a correo electrónico
+        const subject = getEmailSubject();
+        const body = formatEmailBody(formData);
+        window.location.href = `mailto:${CONTACT_EMAIL}?subject=${subject}&body=${body}`;
+      }
+      
+      // Marcar como enviado correctamente
       setSubmitStatus('success');
+      
+      // Limpiar el formulario
       setFormData({
         name: '',
         email: '',
@@ -72,6 +105,7 @@ const ContactSection = () => {
       });
       setFormErrors({});
     } catch (error) {
+      console.error('Error al enviar el formulario:', error);
       setSubmitStatus('error');
     } finally {
       setIsSubmitting(false);
