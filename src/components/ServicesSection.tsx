@@ -44,7 +44,7 @@ const services = [
       {
         subtitle: 'Limpieza y Recuperación',
         details: ['Desengrasantes', 'Removedores de tinta', 'Recuperadores de emulsión', 'Eliminadores de imágenes fantasma'],
-        brands: ['Albachem', 'Kiwo'],
+        brands: ['Kiwo'],
         brandLogos: [
           { name: 'Kiwo', logo: KiwoLogo }
           // Nota: Albachem no tiene logo SVG disponible, se mantiene como texto
