@@ -17,13 +17,15 @@
     "@fortawesome/react-fontawesome": "^0.2.2",
     "@react-three/drei": "^9.122.0",
     "@react-three/fiber": "^8.18.0",
+    "@types/react-transition-group": "^4.4.12",
     "@types/three": "^0.175.0",
     "aframe": "^1.5.0",
     "framer-motion": "^12.9.2",
     "gsap": "^3.12.7",
-    "openai": "^4.96.0",
+    "openai": "^4.100.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-transition-group": "^4.4.5",
     "three": "^0.162.0"
   },
   "devDependencies": {

@@ -1,123 +1,280 @@
-import { useState, lazy, Suspense, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+import { CSSTransition } from 'react-transition-group';
+import { useChat } from '../hooks/useChat';
+import { chatConfig } from '../config/chatStyles';
+import { validateEcuadorianId, formatPhoneNumber } from '../utils/ecuadorianIdValidator';
+import { UserInfo } from '../types/chat';
 import LogoAlemana from '../assets/LogoAlemana.svg';
 
-// Importación lazy para mejorar el rendimiento
-const ChatWindow = lazy(() => import('./ChatWindow'));
+// Componente del formulario
+const UserForm: React.FC<{
+  onSubmit: (userInfo: UserInfo) => void;
+}> = ({ onSubmit }) => {
+  const [formData, setFormData] = useState({
+    name: '',
+    id: '',
+    email: '',
+    phone: '',
+  });
+  const [errors, setErrors] = useState({
+    name: '',
+    id: '',
+    email: '',
+    phone: '',
+  });
 
-const ChatBot = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [isAnimating, setIsAnimating] = useState(false);
-  const [hasFocus, setHasFocus] = useState(false);
-
-  // Manejar el cierre con la tecla Escape
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isOpen) {
-        setIsOpen(false);
-      }
+  const validateForm = () => {
+    const newErrors = {
+      name: !formData.name ? 'El nombre es requerido' : '',
+      id: !validateEcuadorianId(formData.id) ? 'Cédula inválida' : '',
+      email: !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email) ? 'Email inválido' : '',
+      phone: !/^\d{10}$/.test(formData.phone.replace(/\D/g, '')) ? 'Teléfono inválido' : '',
     };
-    
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen]);
+    setErrors(newErrors);
+    return !Object.values(newErrors).some(error => error);
+  };
 
-  const toggleChat = () => {
-    if (isAnimating) return;
-    
-    setIsAnimating(true);
-    
-    if (isOpen) {
-      setIsOpen(false);
-      setTimeout(() => setIsAnimating(false), 300); // Duración de la animación
-    } else {
-      setIsOpen(true);
-      setIsLoaded(true);
-      setTimeout(() => setIsAnimating(false), 300);
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (validateForm()) {
+      onSubmit({
+        ...formData,
+        phone: formatPhoneNumber(formData.phone),
+      });
     }
   };
 
   return (
-    <div 
-      className="fixed bottom-6 right-6 z-50"
-      role="region"
-      aria-label="Asistente virtual de chat"
-    >
-      {/* Agregar una etiqueta visible al enfocar para mejorar accesibilidad */}
-      {hasFocus && !isOpen && (
-        <div 
-          className="absolute bottom-16 right-0 bg-black/80 text-white py-2 px-4 rounded-lg text-sm
-            animate-fadeIn whitespace-nowrap"
-          role="tooltip"
-        >
-          Abrir chat de asistencia
-        </div>
-      )}
+    <form onSubmit={handleSubmit} className="space-y-4 p-4">
+      <div>
+        <input
+          type="text"
+          placeholder="Nombre completo"
+          value={formData.name}
+          onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+          className={`${chatConfig.components.input} w-full`}
+        />
+        {errors.name && <span className="text-red-500 text-sm">{errors.name}</span>}
+      </div>
+      <div>
+        <input
+          type="text"
+          placeholder="Cédula"
+          value={formData.id}
+          onChange={(e) => setFormData(prev => ({ ...prev, id: e.target.value }))}
+          className={`${chatConfig.components.input} w-full`}
+        />
+        {errors.id && <span className="text-red-500 text-sm">{errors.id}</span>}
+      </div>
+      <div>
+        <input
+          type="email"
+          placeholder="Email"
+          value={formData.email}
+          onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+          className={`${chatConfig.components.input} w-full`}
+        />
+        {errors.email && <span className="text-red-500 text-sm">{errors.email}</span>}
+      </div>
+      <div>
+        <input
+          type="tel"
+          placeholder="Teléfono"
+          value={formData.phone}
+          onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
+          className={`${chatConfig.components.input} w-full`}
+        />
+        {errors.phone && <span className="text-red-500 text-sm">{errors.phone}</span>}
+      </div>
+      <button
+        type="submit"
+        className="w-full bg-gradient-to-r from-[#4B0082] to-[#DAA520] text-white py-2 rounded-lg hover:opacity-90 transition-opacity"
+      >
+        Iniciar chat
+      </button>
+    </form>
+  );
+};
 
-      {isOpen && isLoaded && (
-        <div 
-          className="absolute bottom-16 right-0 w-[320px] h-[480px] rounded-2xl overflow-hidden 
-            shadow-elevated transform-gpu animate-slideUp"
-          aria-live="polite"
-        >
-          <Suspense fallback={
-            <div className="flex items-center justify-center h-full bg-gradient-to-br from-primary/90 to-dark-soft/90 backdrop-blur-md">
-              <div className="flex flex-col items-center gap-3">
-                <img 
-                  src={LogoAlemana}
-                  alt=""
-                  className="w-16 h-16 animate-pulse"
-                  style={{ filter: 'drop-shadow(0 0 10px rgba(218, 165, 32, 0.3))' }}
-                  aria-hidden="true"
-                />
-                <p className="text-secondary font-medium" aria-live="polite">Cargando chat...</p>
-              </div>
-            </div>
-          }>
-            <ChatWindow onClose={() => setIsOpen(false)} />
-          </Suspense>
-        </div>
-      )}
-      
+// Componente de mensaje
+const ChatMessage: React.FC<{
+  role: 'assistant' | 'user' | 'system';
+  content: string;
+}> = ({ role, content }) => {
+  const isBot = role === 'assistant';
+  return (
+    <div
+      className={`flex ${isBot ? 'justify-start' : 'justify-end'} mb-4`}
+    >
+      <div
+        className={`p-3 rounded-lg max-w-[80%] ${
+          isBot
+            ? `${chatConfig.colors.message.bot.bg} ${chatConfig.colors.message.bot.border}`
+            : chatConfig.colors.message.user.bg
+        } text-white`}
+      >
+        {content}
+      </div>
+    </div>
+  );
+};
+
+// Componente principal del chat
+const ChatBot: React.FC = () => {
+  const { state, sendMessage, setUserInfo, toggleChat, resetChat } = useChat();
+  const [input, setInput] = useState('');
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [state.messages]);
+
+  useEffect(() => {
+    if (state.isOpen && !state.isFormCompleted) {
+      sendMessage('¡Bienvenido al asistente técnico de Alemana Serigrafía! Por favor, completa el siguiente formulario para poder ayudarte mejor.');
+    }
+  }, [state.isOpen, state.isFormCompleted]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!input.trim()) return;
+    
+    try {
+      await sendMessage(input);
+      setInput('');
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
+  const chatWindowClass = isMobile
+    ? 'fixed inset-0 z-50'
+    : `${chatConfig.layout.container} ${chatConfig.layout.chatWindow}`;
+
+  return (
+    <>
       <button
         onClick={toggleChat}
-        onFocus={() => setHasFocus(true)}
-        onBlur={() => setHasFocus(false)}
-        className={`group relative flex items-center justify-center w-14 h-14 rounded-full 
-          shadow-elevated transition-all duration-300 transform hover:scale-110 
-          focus:outline-none focus:ring-2 focus:ring-secondary focus:ring-offset-2 focus:ring-offset-dark
-          ${isOpen 
-            ? 'bg-gradient-to-br from-red-600/90 to-red-700/90 hover:from-red-700/90 hover:to-red-800/90' 
-            : 'bg-gradient-to-br from-primary to-secondary hover:from-primary-light hover:to-secondary-light'
-          }`}
-        aria-label={isOpen ? 'Cerrar chat de asistencia' : 'Abrir chat de asistencia'}
-        aria-expanded={isOpen}
-        aria-controls="chat-window"
-        disabled={isAnimating}
+        className={`${chatConfig.components.button.base} ${
+          state.isOpen
+            ? chatConfig.components.button.gradient.open
+            : chatConfig.components.button.gradient.closed
+        } ${chatConfig.layout.container}`}
       >
-        <div className={`absolute inset-[2px] rounded-full bg-gradient-to-br transition-opacity duration-300
-          ${isOpen 
-            ? 'from-red-600 to-red-700 opacity-80' 
-            : 'from-primary to-secondary opacity-90'
-          }`}>
-          <img 
-            src={LogoAlemana}
-            alt=""
-            className={`w-full h-full p-2.5 transition-all duration-300 ${
-              isOpen ? 'rotate-90 scale-90' : 'rotate-0 scale-100'
-            }`}
-            style={{ filter: 'brightness(0) invert(1)' }}
-            aria-hidden="true"
-          />
-        </div>
-        {!isOpen && (
-          <span 
-            className="absolute -top-1 -right-1 w-3 h-3 bg-accent rounded-full animate-pulse ring-2 ring-dark"
-            aria-hidden="true"
-          />
+        {state.isOpen ? (
+          <span className="text-2xl">×</span>
+        ) : (
+          <img src={LogoAlemana} alt="Chat" className="w-8 h-8" />
         )}
       </button>
-    </div>
+
+      <CSSTransition
+        in={state.isOpen}
+        timeout={300}
+        classNames="chat"
+        unmountOnExit
+      >
+        <div className={`${chatWindowClass} bg-gradient-to-b ${chatConfig.colors.background} flex flex-col`}>
+          <div className="flex justify-between items-center p-4 border-b border-purple-700/30">
+            <h3 className="text-white font-semibold">Asistente Técnico</h3>
+            {isMobile && (
+              <button
+                onClick={toggleChat}
+                className="text-white text-2xl"
+              >
+                ×
+              </button>
+            )}
+          </div>
+
+          <div className={chatConfig.layout.messages}>
+            {!state.isFormCompleted ? (
+              <UserForm onSubmit={setUserInfo} />
+            ) : (
+              <>
+                {state.messages.map((msg, index) => (
+                  <ChatMessage key={index} role={msg.role} content={msg.content} />
+                ))}
+                {state.isTyping && (
+                  <div className={`${chatConfig.colors.message.bot.bg} ${chatConfig.colors.message.bot.border} p-3 rounded-lg inline-block`}>
+                    <div className="flex space-x-2">
+                      <div className={`w-2 h-2 rounded-full ${chatConfig.colors.text.accent} ${chatConfig.animations.bounce}`} style={{ animationDelay: '0ms' }}></div>
+                      <div className={`w-2 h-2 rounded-full ${chatConfig.colors.text.accent} ${chatConfig.animations.bounce}`} style={{ animationDelay: '150ms' }}></div>
+                      <div className={`w-2 h-2 rounded-full ${chatConfig.colors.text.accent} ${chatConfig.animations.bounce}`} style={{ animationDelay: '300ms' }}></div>
+                    </div>
+                  </div>
+                )}
+                <div ref={messagesEndRef} />
+              </>
+            )}
+          </div>
+
+          {state.isFormCompleted && !state.requestSolved && (
+            <form onSubmit={handleSubmit} className="p-4 border-t border-purple-700/30">
+              <div className="flex space-x-2">
+                <input
+                  type="text"
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  placeholder="Escribe tu mensaje..."
+                  className={chatConfig.components.input}
+                  disabled={state.isTyping}
+                />
+                <button
+                  type="submit"
+                  disabled={state.isTyping || !input.trim()}
+                  className="px-4 py-2 bg-[#DAA520] text-white rounded-lg disabled:opacity-50"
+                >
+                  Enviar
+                </button>
+              </div>
+            </form>
+          )}
+
+          {state.requestSolved && (
+            <div className="p-4 border-t border-purple-700/30">
+              <button
+                onClick={() => {
+                  // Aquí puedes implementar la lógica para WhatsApp
+                  window.open('https://wa.me/+593XXXXXXXX', '_blank');
+                }}
+                className="w-full bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition-colors"
+              >
+                Cotizar con un asesor
+              </button>
+            </div>
+          )}
+        </div>
+      </CSSTransition>
+
+      <style jsx>{`
+        .chat-enter {
+          opacity: 0;
+          transform: scale(0.9);
+        }
+        .chat-enter-active {
+          opacity: 1;
+          transform: scale(1);
+          transition: opacity 300ms, transform 300ms;
+        }
+        .chat-exit {
+          opacity: 1;
+          transform: scale(1);
+        }
+        .chat-exit-active {
+          opacity: 0;
+          transform: scale(0.9);
+          transition: opacity 300ms, transform 300ms;
+        }
+      `}</style>
+    </>
   );
 };
 
