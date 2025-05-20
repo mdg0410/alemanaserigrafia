@@ -2,6 +2,8 @@ import { useReducer, useEffect, useCallback } from 'react';
 import { ChatState, ChatAction, ChatMessage, UserInfo } from '../types/chat';
 import OpenAIService from '../services/openAiService';
 
+const WELCOME_MESSAGE = '¡Bienvenido al asistente técnico de Alemana Serigrafía! Por favor, completa el siguiente formulario para poder ayudarte mejor.';
+
 const STORAGE_KEY = 'alemana-chat-state';
 const MAX_MESSAGES = 15;
 
@@ -15,8 +17,16 @@ const initialState: ChatState = {
   messageCount: 0,
 };
 
-function chatReducer(state: ChatState, action: ChatAction): ChatState {
-  switch (action.type) {
+function createUserContextMessage(userInfo: UserInfo): string {
+  return `Información del usuario:
+    Nombre: ${userInfo.name}
+    Cédula: ${userInfo.id}
+    Email: ${userInfo.email}
+    Teléfono: ${userInfo.phone}
+  `;
+}
+
+function chatReducer(state: ChatState, action: ChatAction): ChatState {  switch (action.type) {
     case 'TOGGLE_CHAT':
       return { ...state, isOpen: !state.isOpen };
     case 'ADD_MESSAGE':
@@ -62,7 +72,6 @@ export function useChat() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify({ userInfo: state.userInfo }));
     }
   }, [state.userInfo]);
-
   const sendMessage = useCallback(async (content: string) => {
     if (state.messageCount >= MAX_MESSAGES) {
       throw new Error('Maximum message limit reached');
@@ -79,8 +88,18 @@ export function useChat() {
     dispatch({ type: 'INCREMENT_MESSAGE_COUNT' });
 
     try {
-      const response = await openAIService.sendMessage([...state.messages, userMessage]);
+      let response: string;
       
+      // Si es el primer mensaje después de completar el formulario
+      if (state.userInfo && state.messages.length === 0) {
+        const initialContext = createUserContextMessage(state.userInfo);
+        response = await openAIService.sendMessage(initialContext);
+        // No mostrar el mensaje de contexto en el chat
+        response = WELCOME_MESSAGE;
+      } else {
+        response = await openAIService.sendMessage(content);
+      }
+
       const assistantMessage: ChatMessage = {
         role: 'assistant',
         content: response,

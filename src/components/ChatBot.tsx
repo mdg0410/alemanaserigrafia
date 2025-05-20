@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import './ChatBot.css';
 import { CSSTransition } from 'react-transition-group';
 import { useChat } from '../hooks/useChat';
 import { chatConfig } from '../config/chatStyles';
@@ -45,50 +46,54 @@ const UserForm: React.FC<{
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 p-4">
-      <div>
+    <form onSubmit={handleSubmit} className={chatConfig.components.form.container}>
+      <div className={chatConfig.components.form.field}>
+        <label className={chatConfig.components.form.label}>Nombre completo</label>
         <input
           type="text"
-          placeholder="Nombre completo"
           value={formData.name}
           onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-          className={`${chatConfig.components.input} w-full`}
+          className={`${chatConfig.components.input.base} ${chatConfig.components.input.focus}`}
+          placeholder="Ej: Juan Pérez"
         />
-        {errors.name && <span className="text-red-500 text-sm">{errors.name}</span>}
+        {errors.name && <span className={chatConfig.components.form.error}>{errors.name}</span>}
       </div>
-      <div>
+      <div className={chatConfig.components.form.field}>
+        <label className={chatConfig.components.form.label}>Cédula</label>
         <input
           type="text"
-          placeholder="Cédula"
           value={formData.id}
           onChange={(e) => setFormData(prev => ({ ...prev, id: e.target.value }))}
-          className={`${chatConfig.components.input} w-full`}
+          className={`${chatConfig.components.input.base} ${chatConfig.components.input.focus}`}
+          placeholder="Ej: 1234567890"
         />
-        {errors.id && <span className="text-red-500 text-sm">{errors.id}</span>}
+        {errors.id && <span className={chatConfig.components.form.error}>{errors.id}</span>}
       </div>
-      <div>
+      <div className={chatConfig.components.form.field}>
+        <label className={chatConfig.components.form.label}>Email</label>
         <input
           type="email"
-          placeholder="Email"
           value={formData.email}
           onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-          className={`${chatConfig.components.input} w-full`}
+          className={`${chatConfig.components.input.base} ${chatConfig.components.input.focus}`}
+          placeholder="ejemplo@correo.com"
         />
-        {errors.email && <span className="text-red-500 text-sm">{errors.email}</span>}
+        {errors.email && <span className={chatConfig.components.form.error}>{errors.email}</span>}
       </div>
-      <div>
+      <div className={chatConfig.components.form.field}>
+        <label className={chatConfig.components.form.label}>Teléfono</label>
         <input
           type="tel"
-          placeholder="Teléfono"
           value={formData.phone}
           onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
-          className={`${chatConfig.components.input} w-full`}
+          className={`${chatConfig.components.input.base} ${chatConfig.components.input.focus}`}
+          placeholder="Ej: 0991234567"
         />
-        {errors.phone && <span className="text-red-500 text-sm">{errors.phone}</span>}
+        {errors.phone && <span className={chatConfig.components.form.error}>{errors.phone}</span>}
       </div>
       <button
         type="submit"
-        className="w-full bg-gradient-to-r from-[#4B0082] to-[#DAA520] text-white py-2 rounded-lg hover:opacity-90 transition-opacity"
+        className={chatConfig.components.form.submit}
       >
         Iniciar chat
       </button>
@@ -96,32 +101,8 @@ const UserForm: React.FC<{
   );
 };
 
-// Componente de mensaje
-const ChatMessage: React.FC<{
-  role: 'assistant' | 'user' | 'system';
-  content: string;
-}> = ({ role, content }) => {
-  const isBot = role === 'assistant';
-  return (
-    <div
-      className={`flex ${isBot ? 'justify-start' : 'justify-end'} mb-4`}
-    >
-      <div
-        className={`p-3 rounded-lg max-w-[80%] ${
-          isBot
-            ? `${chatConfig.colors.message.bot.bg} ${chatConfig.colors.message.bot.border}`
-            : chatConfig.colors.message.user.bg
-        } text-white`}
-      >
-        {content}
-      </div>
-    </div>
-  );
-};
-
-// Componente principal del chat
 const ChatBot: React.FC = () => {
-  const { state, sendMessage, setUserInfo, toggleChat, resetChat } = useChat();
+  const { state, sendMessage, setUserInfo, toggleChat } = useChat();
   const [input, setInput] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
@@ -136,12 +117,6 @@ const ChatBot: React.FC = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [state.messages]);
 
-  useEffect(() => {
-    if (state.isOpen && !state.isFormCompleted) {
-      sendMessage('¡Bienvenido al asistente técnico de Alemana Serigrafía! Por favor, completa el siguiente formulario para poder ayudarte mejor.');
-    }
-  }, [state.isOpen, state.isFormCompleted]);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim()) return;
@@ -155,126 +130,126 @@ const ChatBot: React.FC = () => {
   };
 
   const chatWindowClass = isMobile
-    ? 'fixed inset-0 z-50'
-    : `${chatConfig.layout.container} ${chatConfig.layout.chatWindow}`;
+    ? chatConfig.layout.chatWindow.mobile
+    : chatConfig.layout.chatWindow.desktop;
 
   return (
-    <>
-      <button
-        onClick={toggleChat}
-        className={`${chatConfig.components.button.base} ${
-          state.isOpen
-            ? chatConfig.components.button.gradient.open
-            : chatConfig.components.button.gradient.closed
-        } ${chatConfig.layout.container}`}
-      >
-        {state.isOpen ? (
-          <span className="text-2xl">×</span>
-        ) : (
-          <img src={LogoAlemana} alt="Chat" className="w-8 h-8" />
-        )}
-      </button>
+    <div className={chatConfig.layout.wrapper}>
+      <div className={chatConfig.layout.container}>
+        <div className={chatConfig.layout.chatButton.wrapper}>
+          <button
+            onClick={toggleChat}
+            className={`${chatConfig.components.button.base} ${chatConfig.layout.chatButton.dimensions} ${
+              state.isOpen
+                ? chatConfig.components.button.gradient.open
+                : chatConfig.components.button.gradient.closed
+            }`}
+          >
+            {state.isOpen ? (
+              <span className="text-2xl text-white">×</span>
+            ) : (
+              <img src={LogoAlemana} alt="Chat" className="w-8 h-8" />
+            )}
+          </button>
+        </div>
 
-      <CSSTransition
-        in={state.isOpen}
-        timeout={300}
-        classNames="chat"
-        unmountOnExit
-      >
-        <div className={`${chatWindowClass} bg-gradient-to-b ${chatConfig.colors.background} flex flex-col`}>
-          <div className="flex justify-between items-center p-4 border-b border-purple-700/30">
-            <h3 className="text-white font-semibold">Asistente Técnico</h3>
-            {isMobile && (
+        <CSSTransition
+          in={state.isOpen}
+          timeout={300}
+          classNames={chatConfig.animations.chat}
+          unmountOnExit
+        >
+          <div className={`${chatWindowClass} bg-gradient-to-b ${chatConfig.colors.background} backdrop-blur-md flex flex-col shadow-xl ring-1 ring-white/10`}>
+            {/* Header */}
+            <div className={chatConfig.layout.header}>
+              <h3 className="text-white font-semibold">Asistente Técnico</h3>
               <button
                 onClick={toggleChat}
-                className="text-white text-2xl"
+                className="text-white hover:text-gray-300 transition-colors w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10"
               >
-                ×
-              </button>
-            )}
-          </div>
-
-          <div className={chatConfig.layout.messages}>
-            {!state.isFormCompleted ? (
-              <UserForm onSubmit={setUserInfo} />
-            ) : (
-              <>
-                {state.messages.map((msg, index) => (
-                  <ChatMessage key={index} role={msg.role} content={msg.content} />
-                ))}
-                {state.isTyping && (
-                  <div className={`${chatConfig.colors.message.bot.bg} ${chatConfig.colors.message.bot.border} p-3 rounded-lg inline-block`}>
-                    <div className="flex space-x-2">
-                      <div className={`w-2 h-2 rounded-full ${chatConfig.colors.text.accent} ${chatConfig.animations.bounce}`} style={{ animationDelay: '0ms' }}></div>
-                      <div className={`w-2 h-2 rounded-full ${chatConfig.colors.text.accent} ${chatConfig.animations.bounce}`} style={{ animationDelay: '150ms' }}></div>
-                      <div className={`w-2 h-2 rounded-full ${chatConfig.colors.text.accent} ${chatConfig.animations.bounce}`} style={{ animationDelay: '300ms' }}></div>
-                    </div>
-                  </div>
-                )}
-                <div ref={messagesEndRef} />
-              </>
-            )}
-          </div>
-
-          {state.isFormCompleted && !state.requestSolved && (
-            <form onSubmit={handleSubmit} className="p-4 border-t border-purple-700/30">
-              <div className="flex space-x-2">
-                <input
-                  type="text"
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  placeholder="Escribe tu mensaje..."
-                  className={chatConfig.components.input}
-                  disabled={state.isTyping}
-                />
-                <button
-                  type="submit"
-                  disabled={state.isTyping || !input.trim()}
-                  className="px-4 py-2 bg-[#DAA520] text-white rounded-lg disabled:opacity-50"
-                >
-                  Enviar
-                </button>
-              </div>
-            </form>
-          )}
-
-          {state.requestSolved && (
-            <div className="p-4 border-t border-purple-700/30">
-              <button
-                onClick={() => {
-                  // Aquí puedes implementar la lógica para WhatsApp
-                  window.open('https://wa.me/+593XXXXXXXX', '_blank');
-                }}
-                className="w-full bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition-colors"
-              >
-                Cotizar con un asesor
+                <span className="text-2xl">×</span>
               </button>
             </div>
-          )}
-        </div>
-      </CSSTransition>
 
-      <style jsx>{`
-        .chat-enter {
-          opacity: 0;
-          transform: scale(0.9);
-        }
-        .chat-enter-active {
-          opacity: 1;
-          transform: scale(1);
-          transition: opacity 300ms, transform 300ms;
-        }
-        .chat-exit {
-          opacity: 1;
-          transform: scale(1);
-        }
-        .chat-exit-active {
-          opacity: 0;
-          transform: scale(0.9);
-          transition: opacity 300ms, transform 300ms;
-        }
-      `}</style>
-    </>
+            {/* Messages Area */}
+            <div className={chatConfig.layout.messages}>
+              {!state.isFormCompleted ? (
+                <UserForm onSubmit={setUserInfo} />
+              ) : (
+                <>
+                  {state.messages.map((msg, index) => (
+                    <div 
+                      key={index} 
+                      className={`${chatConfig.components.message.container} ${
+                        msg.role === 'user' ? 'justify-end' : 'justify-start'
+                      }`}
+                    >
+                      <div 
+                        className={`${chatConfig.components.message.content} ${
+                          msg.role === 'user' 
+                            ? `${chatConfig.colors.message.user.bg} ${chatConfig.colors.message.user.text}`
+                            : `${chatConfig.colors.message.bot.bg} ${chatConfig.colors.message.bot.border} text-white`
+                        }`}
+                      >
+                        {msg.content}
+                      </div>
+                    </div>
+                  ))}
+                  {state.isTyping && (
+                    <div className={chatConfig.components.message.container}>
+                      <div className={`${chatConfig.colors.message.bot.bg} ${chatConfig.colors.message.bot.border} p-3 rounded-lg`}>
+                        <div className="flex space-x-2">
+                          <div className={`w-2 h-2 rounded-full ${chatConfig.colors.text.accent} ${chatConfig.animations.bounce}`} style={{ animationDelay: '0ms' }}></div>
+                          <div className={`w-2 h-2 rounded-full ${chatConfig.colors.text.accent} ${chatConfig.animations.bounce}`} style={{ animationDelay: '150ms' }}></div>
+                          <div className={`w-2 h-2 rounded-full ${chatConfig.colors.text.accent} ${chatConfig.animations.bounce}`} style={{ animationDelay: '300ms' }}></div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  <div ref={messagesEndRef} />
+                </>
+              )}
+            </div>
+
+            {/* Footer */}
+            {state.isFormCompleted && !state.requestSolved && (
+              <div className={chatConfig.layout.footer}>
+                <form onSubmit={handleSubmit} className="flex gap-2">
+                  <input
+                    type="text"
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    placeholder="Escribe tu mensaje..."
+                    className={`${chatConfig.components.input.base} ${chatConfig.components.input.focus}`}
+                    disabled={state.isTyping}
+                  />
+                  <button
+                    type="submit"
+                    disabled={state.isTyping || !input.trim()}
+                    className="px-6 py-2 bg-[#DAA520] text-white rounded-lg disabled:opacity-50 hover:bg-[#B8860B] transition-colors shadow-md"
+                  >
+                    Enviar
+                  </button>
+                </form>
+              </div>
+            )}
+
+            {state.requestSolved && (
+              <div className={chatConfig.layout.footer}>
+                <button
+                  onClick={() => window.open('https://wa.me/+593XXXXXXXX', '_blank')}
+                  className="w-full bg-green-500 text-white py-3 rounded-lg hover:bg-green-600 transition-colors shadow-md flex items-center justify-center gap-2"
+                >
+                  <span>Cotizar con un asesor</span>
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
+                  </svg>
+                </button>
+              </div>
+            )}
+          </div>
+        </CSSTransition>      </div>
+    </div>
   );
 };
 

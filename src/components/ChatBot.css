@@ -1,0 +1,21 @@
+.chat-enter {
+  opacity: 0;
+  transform: scale(0.95);
+}
+
+.chat-enter-active {
+  opacity: 1;
+  transform: scale(1);
+  transition: opacity 300ms ease-out, transform 300ms ease-out;
+}
+
+.chat-exit {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.chat-exit-active {
+  opacity: 0;
+  transform: scale(0.95);
+  transition: opacity 300ms ease-in, transform 300ms ease-in;
+}

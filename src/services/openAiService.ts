@@ -4,10 +4,12 @@ import { ChatMessage } from '../types/chat';
 class OpenAIService {
   private static instance: OpenAIService;
   private openai: OpenAI;
+  private assistantId: string = 'asst_4r7ibGnE4az6pz2f2r2BU17';
   private rateLimiter: {
     tokens: number;
     lastReset: number;
   };
+  private threadId: string | null = null;
 
   private constructor() {
     this.openai = new OpenAI({
@@ -15,7 +17,7 @@ class OpenAIService {
       dangerouslyAllowBrowser: true,
     });
     this.rateLimiter = {
-      tokens: 5, // 5 mensajes por minuto
+      tokens: 5,
       lastReset: Date.now(),
     };
   }
@@ -29,7 +31,7 @@ class OpenAIService {
 
   private resetRateLimiter() {
     const now = Date.now();
-    if (now - this.rateLimiter.lastReset >= 60000) { // 1 minuto
+    if (now - this.rateLimiter.lastReset >= 60000) {
       this.rateLimiter.tokens = 5;
       this.rateLimiter.lastReset = now;
     }
@@ -44,23 +46,53 @@ class OpenAIService {
     return false;
   }
 
-  public async sendMessage(messages: ChatMessage[]): Promise<string> {
+  private async initializeThread() {
+    if (!this.threadId) {
+      const thread = await this.openai.beta.threads.create();
+      this.threadId = thread.id;
+    }
+    return this.threadId;
+  }
+
+  public async sendMessage(message: string): Promise<string> {
     if (!await this.checkRateLimit()) {
       throw new Error('Rate limit exceeded. Please wait a moment before sending another message.');
     }
 
     try {
-      const completion = await this.openai.chat.completions.create({
-        messages: messages.map(msg => ({
-          role: msg.role,
-          content: msg.content
-        })),
-        model: import.meta.env.VITE_OPENAI_MODEL,
-        temperature: 0.7,
-        max_tokens: 1000,
+      // Asegurarse de que existe un thread
+      const threadId = await this.initializeThread();
+
+      // Agregar el mensaje del usuario al thread
+      await this.openai.beta.threads.messages.create(threadId, {
+        role: 'user',
+        content: message,
       });
 
-      return completion.choices[0]?.message?.content || '';
+      // Ejecutar el asistente
+      const run = await this.openai.beta.threads.runs.create(threadId, {
+        assistant_id: this.assistantId,
+      });
+
+      // Esperar a que el asistente termine de procesar
+      let runStatus = await this.openai.beta.threads.runs.retrieve(threadId, run.id);
+      
+      while (runStatus.status === 'queued' || runStatus.status === 'in_progress') {
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        runStatus = await this.openai.beta.threads.runs.retrieve(threadId, run.id);
+      }
+
+      if (runStatus.status === 'completed') {
+        // Obtener los mensajes más recientes
+        const messages = await this.openai.beta.threads.messages.list(threadId);
+        const lastMessage = messages.data[0];
+        
+        if (lastMessage && lastMessage.content[0].type === 'text') {
+          return lastMessage.content[0].text.value;
+        }
+      }
+
+      throw new Error('Failed to get response from assistant');
     } catch (error) {
       console.error('Error in OpenAI service:', error);
       throw new Error('Failed to get response from AI assistant');
