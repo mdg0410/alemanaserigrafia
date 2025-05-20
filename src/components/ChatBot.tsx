@@ -103,8 +103,8 @@ const UserForm: React.FC<{
 
 const ChatBot: React.FC = () => {
   const { state, sendMessage, setUserInfo, toggleChat } = useChat();
-  const [input, setInput] = useState('');
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [input, setInput] = useState('');  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const nodeRef = useRef(null);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
   useEffect(() => {
@@ -151,15 +151,16 @@ const ChatBot: React.FC = () => {
               <img src={LogoAlemana} alt="Chat" className="w-8 h-8" />
             )}
           </button>
-        </div>
-
-        <CSSTransition
+        </div>        <CSSTransition
+          nodeRef={nodeRef}
           in={state.isOpen}
           timeout={300}
           classNames={chatConfig.animations.chat}
           unmountOnExit
         >
-          <div className={`${chatWindowClass} bg-gradient-to-b ${chatConfig.colors.background} backdrop-blur-md flex flex-col shadow-xl ring-1 ring-white/10`}>
+          <div 
+            ref={nodeRef}
+            className={`${chatWindowClass} bg-gradient-to-b ${chatConfig.colors.background} backdrop-blur-md flex flex-col shadow-xl ring-1 ring-white/10`}>
             {/* Header */}
             <div className={chatConfig.layout.header}>
               <h3 className="text-white font-semibold">Asistente Técnico</h3>

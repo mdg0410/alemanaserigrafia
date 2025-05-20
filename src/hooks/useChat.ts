@@ -88,28 +88,31 @@ export function useChat() {
     dispatch({ type: 'INCREMENT_MESSAGE_COUNT' });
 
     try {
-      let response: string;
+      let assistantResponse;
       
       // Si es el primer mensaje después de completar el formulario
       if (state.userInfo && state.messages.length === 0) {
         const initialContext = createUserContextMessage(state.userInfo);
-        response = await openAIService.sendMessage(initialContext);
+        await openAIService.sendMessage(initialContext);
         // No mostrar el mensaje de contexto en el chat
-        response = WELCOME_MESSAGE;
+        assistantResponse = {
+          content: WELCOME_MESSAGE,
+          requestSolved: false
+        };
       } else {
-        response = await openAIService.sendMessage(content);
+        assistantResponse = await openAIService.sendMessage(content);
       }
 
       const assistantMessage: ChatMessage = {
         role: 'assistant',
-        content: response,
+        content: assistantResponse.content,
         timestamp: Date.now(),
       };
 
       dispatch({ type: 'ADD_MESSAGE', payload: assistantMessage });
       
       // Verificar si la solicitud fue resuelta
-      if (response.includes('request_solved = true')) {
+      if (assistantResponse.requestSolved) {
         dispatch({ type: 'SET_REQUEST_SOLVED', payload: true });
       }
     } catch (error) {
@@ -118,7 +121,7 @@ export function useChat() {
     } finally {
       dispatch({ type: 'SET_TYPING', payload: false });
     }
-  }, [state.messages, state.messageCount]);
+  }, [state.messages, state.messageCount, state.userInfo]);
 
   const setUserInfo = useCallback((userInfo: UserInfo) => {
     dispatch({ type: 'SET_USER_INFO', payload: userInfo });
