@@ -118,6 +118,18 @@ const ChatBot: React.FC = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [state.messages, state.isTyping, state.showForm]);
 
+  const handleOpenChat = () => {
+    if (!state.isOpen) {
+      toggleChat();
+    }
+  };
+
+  const handleCloseChat = () => {
+    if (state.isOpen) {
+      toggleChat();
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim()) return;
@@ -149,22 +161,16 @@ const ChatBot: React.FC = () => {
   return (
     <div className={chatConfig.layout.wrapper}>
       <div className={chatConfig.layout.container}>
-        <div className={chatConfig.layout.chatButton.wrapper}>
-          <button
-            onClick={toggleChat}
-            className={`${chatConfig.components.button.base} ${chatConfig.layout.chatButton.dimensions} ${
-              state.isOpen
-                ? chatConfig.components.button.gradient.open
-                : chatConfig.components.button.gradient.closed
-            }`}
-          >
-            {state.isOpen ? (
-              <span className="text-2xl text-white">×</span>
-            ) : (
+        {!state.isOpen && (
+          <div className={chatConfig.layout.chatButton.wrapper}>
+            <button
+              onClick={handleOpenChat}
+              className={`${chatConfig.components.button.base} ${chatConfig.layout.chatButton.dimensions} ${chatConfig.components.button.gradient.closed}`}
+            >
               <img src={LogoAlemana} alt="Chat" className="w-8 h-8" />
-            )}
-          </button>
-        </div>
+            </button>
+          </div>
+        )}
 
         <CSSTransition
           nodeRef={nodeRef}
@@ -181,7 +187,7 @@ const ChatBot: React.FC = () => {
             <div className={chatConfig.layout.header}>
               <h3 className="text-white font-semibold">Asistente Técnico</h3>
               <button
-                onClick={toggleChat}
+                onClick={handleCloseChat}
                 className="text-white hover:text-gray-300 transition-colors w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10"
               >
                 <span className="text-2xl">×</span>

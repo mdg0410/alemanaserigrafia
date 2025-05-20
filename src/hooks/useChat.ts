@@ -150,16 +150,8 @@ export function useChat() {
     try {
       let assistantResponse;
       
-      if (state.userInfo && state.messages.length === 1) {
-        const initialContext = createUserContextMessage(state.userInfo);
-        await openAIService.sendMessage(initialContext);
-        assistantResponse = {
-          content: ADVISOR_INTRO_MESSAGE,
-          requestSolved: false
-        };
-      } else {
-        assistantResponse = await openAIService.sendMessage(content);
-      }
+      // Ya no enviamos el mensaje de introducción al empezar a chatear
+      assistantResponse = await openAIService.sendMessage(content);
 
       const assistantMessage: ChatMessage = {
         role: 'assistant',
@@ -178,7 +170,7 @@ export function useChat() {
     } finally {
       dispatch({ type: 'SET_TYPING', payload: false });
     }
-  }, [state.messages.length, state.messageCount, state.userInfo]);
+  }, [state.messageCount]);
 
   const setUserInfo = useCallback((userInfo: UserInfo) => {
     dispatch({ type: 'SET_USER_INFO', payload: userInfo });
