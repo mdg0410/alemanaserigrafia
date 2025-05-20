@@ -3,9 +3,11 @@ import { ChatState, ChatAction, ChatMessage, UserInfo } from '../types/chat';
 import OpenAIService from '../services/openAiService';
 
 const WELCOME_MESSAGE = '¡Bienvenido al asistente técnico de Alemana Serigrafía! Por favor, completa el siguiente formulario para poder ayudarte mejor.';
+const ADVISOR_INTRO_MESSAGE = 'Hola, soy el asistente técnico de Alemana Serigrafía. Estoy aquí para responder todas tus dudas sobre serigrafía, procesos, materiales y recomendaciones técnicas. ¿En qué puedo ayudarte?';
 
 const STORAGE_KEY = 'alemana-chat-state';
 const MAX_MESSAGES = 15;
+const FORM_DELAY = 2000; // 2 segundos
 
 const initialState: ChatState = {
   isOpen: false,
@@ -15,6 +17,7 @@ const initialState: ChatState = {
   isFormCompleted: false,
   requestSolved: false,
   messageCount: 0,
+  showForm: false,
 };
 
 function createUserContextMessage(userInfo: UserInfo): string {
@@ -26,26 +29,72 @@ function createUserContextMessage(userInfo: UserInfo): string {
   `;
 }
 
-function chatReducer(state: ChatState, action: ChatAction): ChatState {  switch (action.type) {
+function chatReducer(state: ChatState, action: ChatAction): ChatState {
+  switch (action.type) {
     case 'TOGGLE_CHAT':
-      return { ...state, isOpen: !state.isOpen };
+      const isOpening = !state.isOpen;
+      // Si está abriendo y no hay mensajes o datos de usuario guardados
+      if (isOpening && state.messages.length === 0 && !state.userInfo) {
+        return {
+          ...state,
+          isOpen: true,
+          messages: [{ role: 'assistant', content: WELCOME_MESSAGE, timestamp: Date.now() }],
+          showForm: false, // El formulario se mostrará después del delay
+        };
+      }
+      // Si está abriendo y hay datos de usuario guardados pero no hay mensajes
+      else if (isOpening && state.messages.length === 0 && state.userInfo) {
+        return {
+          ...state,
+          isOpen: true,
+          messages: [{ role: 'assistant', content: ADVISOR_INTRO_MESSAGE, timestamp: Date.now() }],
+          isFormCompleted: true,
+        };
+      }
+      return {
+        ...state,
+        isOpen: isOpening,
+      };
+
+    case 'SHOW_FORM':
+      return { ...state, showForm: true };
+
+    case 'SET_USER_INFO':
+      return {
+        ...state,
+        userInfo: action.payload,
+        isFormCompleted: true,
+        showForm: false,
+        messages: [{ role: 'assistant', content: ADVISOR_INTRO_MESSAGE, timestamp: Date.now() }],
+      };
+
     case 'ADD_MESSAGE':
       return {
         ...state,
         messages: [...state.messages, action.payload],
       };
-    case 'SET_USER_INFO':
-      return { ...state, userInfo: action.payload, isFormCompleted: true };
+
     case 'SET_TYPING':
       return { ...state, isTyping: action.payload };
+
     case 'SET_FORM_COMPLETED':
       return { ...state, isFormCompleted: action.payload };
+
     case 'SET_REQUEST_SOLVED':
       return { ...state, requestSolved: action.payload };
+
     case 'RESET_CHAT':
-      return { ...initialState, userInfo: state.userInfo };
+      return {
+        ...initialState,
+        userInfo: state.userInfo,
+        isFormCompleted: state.userInfo !== null,
+        isOpen: true,
+        messages: state.userInfo ? [{ role: 'assistant', content: ADVISOR_INTRO_MESSAGE, timestamp: Date.now() }] : [],
+      };
+
     case 'INCREMENT_MESSAGE_COUNT':
       return { ...state, messageCount: state.messageCount + 1 };
+
     default:
       return state;
   }
@@ -55,8 +104,8 @@ export function useChat() {
   const [state, dispatch] = useReducer(chatReducer, initialState);
   const openAIService = OpenAIService.getInstance();
 
+  // Cargar estado del localStorage
   useEffect(() => {
-    // Cargar estado del localStorage
     const savedState = localStorage.getItem(STORAGE_KEY);
     if (savedState) {
       const parsedState = JSON.parse(savedState);
@@ -66,12 +115,23 @@ export function useChat() {
     }
   }, []);
 
+  // Guardar userInfo en localStorage
   useEffect(() => {
-    // Guardar userInfo en localStorage
     if (state.userInfo) {
       localStorage.setItem(STORAGE_KEY, JSON.stringify({ userInfo: state.userInfo }));
     }
   }, [state.userInfo]);
+
+  // Mostrar formulario después del delay
+  useEffect(() => {
+    if (state.isOpen && !state.isFormCompleted && !state.showForm && state.messages.length > 0) {
+      const timer = setTimeout(() => {
+        dispatch({ type: 'SHOW_FORM' });
+      }, FORM_DELAY);
+      return () => clearTimeout(timer);
+    }
+  }, [state.isOpen, state.isFormCompleted, state.showForm, state.messages.length]);
+
   const sendMessage = useCallback(async (content: string) => {
     if (state.messageCount >= MAX_MESSAGES) {
       throw new Error('Maximum message limit reached');
@@ -90,13 +150,11 @@ export function useChat() {
     try {
       let assistantResponse;
       
-      // Si es el primer mensaje después de completar el formulario
-      if (state.userInfo && state.messages.length === 0) {
+      if (state.userInfo && state.messages.length === 1) {
         const initialContext = createUserContextMessage(state.userInfo);
         await openAIService.sendMessage(initialContext);
-        // No mostrar el mensaje de contexto en el chat
         assistantResponse = {
-          content: WELCOME_MESSAGE,
+          content: ADVISOR_INTRO_MESSAGE,
           requestSolved: false
         };
       } else {
@@ -111,7 +169,6 @@ export function useChat() {
 
       dispatch({ type: 'ADD_MESSAGE', payload: assistantMessage });
       
-      // Verificar si la solicitud fue resuelta
       if (assistantResponse.requestSolved) {
         dispatch({ type: 'SET_REQUEST_SOLVED', payload: true });
       }
@@ -121,7 +178,7 @@ export function useChat() {
     } finally {
       dispatch({ type: 'SET_TYPING', payload: false });
     }
-  }, [state.messages, state.messageCount, state.userInfo]);
+  }, [state.messages.length, state.messageCount, state.userInfo]);
 
   const setUserInfo = useCallback((userInfo: UserInfo) => {
     dispatch({ type: 'SET_USER_INFO', payload: userInfo });

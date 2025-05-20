@@ -19,6 +19,7 @@ export interface ChatState {
   isFormCompleted: boolean;
   requestSolved: boolean;
   messageCount: number;
+  showForm: boolean;
 }
 
 export type ChatAction =
@@ -29,4 +30,5 @@ export type ChatAction =
   | { type: 'SET_FORM_COMPLETED'; payload: boolean }
   | { type: 'SET_REQUEST_SOLVED'; payload: boolean }
   | { type: 'RESET_CHAT' }
-  | { type: 'INCREMENT_MESSAGE_COUNT' };
+  | { type: 'INCREMENT_MESSAGE_COUNT' }
+  | { type: 'SHOW_FORM' };
