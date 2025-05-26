@@ -1,6 +1,7 @@
 import { useReducer, useEffect, useCallback } from 'react';
 import { ChatState, ChatAction, ChatMessage, UserInfo } from '../types/chat';
 import OpenAIService from '../services/openAiService';
+import GoogleSheetService from '../services/googleSheetService';
 
 const WELCOME_MESSAGE = '¡Bienvenido al asistente técnico de Alemana Serigrafía! Por favor, completa el siguiente formulario para poder ayudarte mejor.';
 const ADVISOR_INTRO_MESSAGE = 'Hola, soy el asistente técnico de Alemana Serigrafía. Estoy aquí para responder todas tus dudas sobre serigrafía, procesos, materiales y recomendaciones técnicas. ¿En qué puedo ayudarte?';
@@ -172,8 +173,35 @@ export function useChat() {
     }
   }, [state.messageCount]);
 
-  const setUserInfo = useCallback((userInfo: UserInfo) => {
-    dispatch({ type: 'SET_USER_INFO', payload: userInfo });
+  const setUserInfo = useCallback(async (userInfo: UserInfo) => {
+    try {
+      const googleSheetService = GoogleSheetService.getInstance();
+      const result = await googleSheetService.saveUserData(userInfo);
+      
+      if (!result.success) {
+        dispatch({ 
+          type: 'ADD_MESSAGE', 
+          payload: { 
+            role: 'assistant', 
+            content: result.message, 
+            timestamp: Date.now() 
+          } 
+        });
+        return;
+      }
+
+      dispatch({ type: 'SET_USER_INFO', payload: userInfo });
+    } catch (error) {
+      console.error('Error guardando datos del usuario:', error);
+      dispatch({ 
+        type: 'ADD_MESSAGE', 
+        payload: { 
+          role: 'assistant', 
+          content: 'Lo siento, hubo un error al guardar tus datos. Por favor, inténtalo de nuevo.', 
+          timestamp: Date.now() 
+        } 
+      });
+    }
   }, []);
 
   const toggleChat = useCallback(() => {

@@ -35,13 +35,17 @@ const UserFormMessage: React.FC<{
     return !Object.values(newErrors).some(error => error);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (validateForm()) {
-      onSubmit({
-        ...formData,
-        phone: formatPhoneNumber(formData.phone),
-      });
+      try {
+        onSubmit({
+          ...formData,
+          phone: formatPhoneNumber(formData.phone),
+        });
+      } catch (error) {
+        console.error('Error al enviar el formulario:', error);
+      }
     }
   };
 
