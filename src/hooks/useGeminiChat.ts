@@ -4,78 +4,86 @@ import {
   ChatSession, 
   Part, 
   FunctionDeclarationsTool,
-  SchemaType, // <--- 1. IMPORTAMOS SchemaType
+  SchemaType,
   GenerateContentResult 
 } from '@google/generative-ai';
 import { ChatState, ChatAction, ChatMessage, UserInfo } from '../types/chat';
 
-// --- MENSAJES PREDETERMINADOS ---
+// --- PRE-DETERMINED MESSAGES ---
 const WELCOME_MESSAGE = '¡Bienvenido al asistente técnico de Alemana de Serigrafía! Por favor, completa el siguiente formulario para poder ayudarte mejor.';
-const ADVISOR_INTRO_MESSAGE = 'Hola, soy Seri, el asistente técnico de Alemana de Serigrafía. Estoy aquí para responder todas tus dudas sobre serigrafía, procesos, materiales y recomendaciones técnicas. ¿En qué puedo ayudarte?';
+const ADVISOR_INTRO_MESSAGE = 'Hola, soy Seri, tu asesor de serigrafía virtual. Cuéntame sobre tu proyecto y te ayudaré a armar el kit de productos perfecto para ti.';
+const HUMAN_ADVISOR_PHONE_NUMBER = '593968676893'; 
 
-// --- INSTRUCCIÓN DEL SISTEMA (CONTEXTO DEL NEGOCIO) ---
+// --- SYSTEM INSTRUCTIONS (NEW PERSONALITY) ---
 const SYSTEM_PROMPT: Part[] = [
   {
-    text: `Eres "Seri", un asistente virtual experto y amigable de "Alemana de Serigrafía", una empresa ecuatoriana líder en insumos de serigrafía desde 1992.
+    text: `Eres "Seri", un asesor de ventas y experto en serigrafía para "Alemana de Serigrafía", una empresa ecuatoriana líder en insumos de serigrafía desde 1992.
 
     **Tu Misión:**
-    - Asistir a los usuarios con dudas técnicas sobre serigrafía.
-    - Proveer información sobre los productos y servicios de la empresa.
-    - Tu tono debe ser siempre profesional, servicial y cercano.
+    - Entender las necesidades del cliente para recomendarle un "kit de productos" ideal.
+    - Facilitar el contacto con un vendedor humano para cerrar la venta o dar soporte.
+    - Tu tono debe ser siempre profesional, servicial y proactivo.
     - Siempre responde en español.
 
-    **Conocimiento Clave de "Alemana de Serigrafía":**
-    - **Fundación:** 1992 por Raúl Trujillo.
-    - **Especialidad:** Venta de insumos técnicos (emulsiones, tintas, mallas), equipos, servicios de preprensa (fotolitos, tensado de marcos) y capacitación.
-    - **Marcas Distribuidas:** Kiwo, Ulano, Printop, Avient, Alcoplast, Architex.
-    - **Contacto:** Correo ventas1@inkgraph.net, teléfonos +593 96 867 6893 / +593 98 611 2559. Ubicados en Quito, Ecuador.
-    - **Propuesta de Valor:** Pioneros en la modernización de la serigrafía en Ecuador.
+    **Tu Proceso de Venta:**
+    1.  **Entender el Contexto:** Haz preguntas clave para entender el proyecto del cliente. Ejemplos: "¿Qué tipo de producto vas a estampar (camisetas, jarras, etc.)?", "¿Sobre qué material (algodón, poliéster, cerámica)?", "¿Es para fondos claros u oscuros?".
+    2.  **Crear un Kit:** Basado en sus respuestas, recomienda un "kit de productos". Describe los productos de forma conceptual (ej: "Para eso, tu kit ideal llevaría: una emulsión fotosensible de alta definición marca Ulano, tintas plastisol de Printop..."). **NUNCA inventes stock ni precios.**
+    3.  **Confirmar y Actuar:** Una vez que el cliente esté de acuerdo con el kit, pregunta si desea que un asesor humano lo contacte. Si dice que sí, **DEBES** usar la función 'contactarAsesorVenta'.
 
-    **Reglas Importantes:**
-    - Si un usuario pregunta por precios o stock, DEBES usar la herramienta 'obtenerInfoProducto'. No inventes esta información.
-    - Si no sabes algo, responde honestamente que necesitas consultar con un especialista humano del equipo.`
+    **Reglas para Ejecutar Funciones:**
+    - **Usa 'contactarAsesorVenta'** cuando hayas definido un kit y el cliente quiera proceder.
+    - **Usa 'contactarAsesorSoporte'** si el cliente pide explícitamente hablar con una persona, un humano, un asesor, o si se siente frustrado.
+    
+    **Marcas que conoces:** Kiwo, Ulano, Printop, Avient, Alcoplast, Architex.`
   }
 ];
 
-// --- DEFINICIÓN DE HERRAMIENTAS (FUNCTION CALLING) ---
+// --- TOOL DEFINITION (FUNCTION CALLING) ---
 const tools: FunctionDeclarationsTool[] = [
-  {
-    functionDeclarations: [
-      {
-        name: 'obtenerInfoProducto',
-        description: 'Obtiene información de stock y precio de un producto de serigrafía.',
-        parameters: {
-          // <--- 2. CORREGIMOS LOS TIPOS A SchemaType
-          type: SchemaType.OBJECT, 
-          properties: {
-            nombreProducto: {
-              type: SchemaType.STRING,
-              description: 'El producto a buscar, ej: "tinta plastisol", "emulsión"',
+    {
+      functionDeclarations: [
+        {
+          name: 'contactarAsesorVenta',
+          description: 'Redirige al usuario a WhatsApp para finalizar la compra de un kit de productos con un asesor humano.',
+          parameters: {
+            type: SchemaType.OBJECT,
+            properties: {
+              resumenKit: {
+                type: SchemaType.STRING,
+                description: 'Un resumen claro y conciso del kit de productos recomendado para el cliente. Ej: "Kit para camisetas de algodón: Emulsión Ulano, Tintas Printop (rojo, negro), Malla 90."',
+              },
+              nombreCliente: {
+                  type: SchemaType.STRING,
+                  description: 'El nombre del cliente que se obtuvo del formulario inicial.'
+              }
             },
-            marca: {
-              type: SchemaType.STRING,
-              description: 'La marca del producto, ej: "Printop", "Kiwo"',
-            },
+            required: ['resumenKit', 'nombreCliente'],
           },
-          required: ['nombreProducto'],
         },
-      },
-    ],
-  },
-];
+        {
+          name: 'contactarAsesorSoporte',
+          description: 'Redirige al usuario a WhatsApp para que reciba ayuda de un asesor humano.',
+          parameters: {
+            type: SchemaType.OBJECT,
+            properties: {
+              motivoConsulta: {
+                type: SchemaType.STRING,
+                description: 'Un resumen del problema o la pregunta del cliente para darle contexto al asesor humano.',
+              },
+              nombreCliente: {
+                  type: SchemaType.STRING,
+                  description: 'El nombre del cliente que se obtuvo del formulario inicial.'
+              }
+            },
+            required: ['motivoConsulta', 'nombreCliente'],
+          },
+        },
+      ],
+    },
+  ];
 
-// Base de datos simulada para la función
-const fakeProductDatabase: { [key: string]: { stock: number; precio: string } } = {
-  "tinta plastisol printop": { stock: 120, precio: "15.50 USD por kg" },
-  "emulsion kiwo": { stock: 75, precio: "30.00 USD por litro" },
-  "malla 90": { stock: 200, precio: "12.00 USD por metro" }
-};
-
-// --- CONFIGURACIÓN DE GEMINI ---
+// --- GEMINI CONFIGURATION ---
 const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY as string;
-if (!GEMINI_API_KEY) {
-  throw new Error('La clave VITE_GEMINI_API_KEY no está configurada en tu archivo .env');
-}
 const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ 
   model: 'gemini-1.5-flash',
@@ -86,7 +94,7 @@ const model = genAI.getGenerativeModel({
   tools: tools,
 });
 
-// --- LÓGICA DEL CHAT (REDUCER Y ESTADO) ---
+// --- CHAT LOGIC ---
 const STORAGE_KEY = 'alemana-chat-gemini-state';
 const MAX_MESSAGES = 20;
 const FORM_DELAY = 1500;
@@ -102,9 +110,7 @@ const initialState: ChatState = {
   showForm: false,
 };
 
-// El reducer no necesita cambios
 function chatReducer(state: ChatState, action: ChatAction): ChatState {
-    // ... (código del reducer sin cambios)
     switch (action.type) {
       case 'TOGGLE_CHAT':
         const isOpening = !state.isOpen;
@@ -171,6 +177,11 @@ export function useGeminiChat() {
   const [state, dispatch] = useReducer(chatReducer, initialState);
   const chatSessionRef = useRef<ChatSession | null>(null);
 
+  const redirectToWhatsApp = (message: string) => {
+    const whatsappUrl = `https://wa.me/${HUMAN_ADVISOR_PHONE_NUMBER}?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank');
+  };
+
   useEffect(() => {
     const savedState = localStorage.getItem(STORAGE_KEY);
     if (savedState) {
@@ -211,7 +222,6 @@ export function useGeminiChat() {
          chatSessionRef.current = model.startChat();
       }
 
-      // <--- 3. CORREGIMOS EL MANEJO DE LA RESPUESTA ---
       let result: GenerateContentResult = await chatSessionRef.current.sendMessage(content);
       
       let continueLoop = true;
@@ -221,32 +231,37 @@ export function useGeminiChat() {
 
         if (functionCall) {
           console.log("El modelo solicitó una llamada de función:", functionCall);
-          const { name, args } = functionCall;
-          
-          if (name === 'obtenerInfoProducto') {
-            // Cambiamos el acceso a las propiedades usando indexación por string
-            const nombreProducto = (args as any)['nombreProducto'] as string;
-            const marca = (args as any)['marca'] as string | undefined;
-            const key = `${nombreProducto} ${marca || ''}`.trim().toLowerCase();
-            const productInfo = fakeProductDatabase[key] || { info: "Producto no encontrado. Por favor, pide a un asesor humano más detalles." };
+          const { name, args } = functionCall as { name: string; args: any };
 
-            // Enviamos el resultado de la función de vuelta al modelo
-            result = await chatSessionRef.current.sendMessage([
-              { functionResponse: { name, response: { content: JSON.stringify(productInfo) } } },
-            ]);
+          if (name === 'contactarAsesorVenta') {
+            const message = `¡Hola! Soy ${args.nombreCliente}. Seri me recomendó el siguiente kit y quisiera finalizar la compra:\n\n*Kit Recomendado:*\n${args.resumenKit}`;
+            redirectToWhatsApp(message);
+            const botMessage: ChatMessage = { role: 'model', content: '¡Perfecto! Te estoy redirigiendo a WhatsApp para que un asesor complete tu pedido.', timestamp: Date.now() };
+            dispatch({ type: 'ADD_MESSAGE', payload: botMessage });
+            dispatch({ type: 'SET_REQUEST_SOLVED', payload: true }); 
+            continueLoop = false; 
+
+          } else if (name === 'contactarAsesorSoporte') {
+            const message = `¡Hola! Soy ${args.nombreCliente} y necesito ayuda con lo siguiente: ${args.motivoConsulta}`;
+            redirectToWhatsApp(message);
+            const botMessage: ChatMessage = { role: 'model', content: 'Claro que sí. Un asesor humano te atenderá por WhatsApp en un momento.', timestamp: Date.now() };
+            dispatch({ type: 'ADD_MESSAGE', payload: botMessage });
+            dispatch({ type: 'SET_REQUEST_SOLVED', payload: true }); 
+            continueLoop = false; 
+            
           } else {
-            // Si la función no existe en nuestro código, detenemos el bucle
             continueLoop = false;
           }
         } else {
-            // Si no hay más function calls, salimos del bucle
             continueLoop = false;
         }
       }
 
-      const finalText = result.response.text();
-      const botMessage: ChatMessage = { role: 'model', content: finalText, timestamp: Date.now() };
-      dispatch({ type: 'ADD_MESSAGE', payload: botMessage });
+      if (!result.response.functionCalls()?.length) {
+        const finalText = result.response.text();
+        const botMessage: ChatMessage = { role: 'model', content: finalText, timestamp: Date.now() };
+        dispatch({ type: 'ADD_MESSAGE', payload: botMessage });
+      }
 
     } catch (error) {
       console.error("Error al enviar mensaje a Gemini:", error);
@@ -255,7 +270,7 @@ export function useGeminiChat() {
     } finally {
       dispatch({ type: 'SET_TYPING', payload: false });
     }
-  }, [state.messageCount]);
+  }, [state.messageCount, state.userInfo]);
 
   const setUserInfo = useCallback(async (userInfo: UserInfo) => {
     dispatch({ type: 'SET_USER_INFO', payload: userInfo });
