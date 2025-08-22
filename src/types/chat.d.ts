@@ -6,7 +6,7 @@ export interface UserInfo {
 }
 
 export interface ChatMessage {
-  role: 'assistant' | 'user' | 'system';
+  role: 'assistant' | 'user' | 'system' | 'model'; // 'model' para compatibilidad con Gemini
   content: string;
   timestamp: number;
 }

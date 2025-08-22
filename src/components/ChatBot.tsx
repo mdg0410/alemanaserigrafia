@@ -1,13 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
 import './ChatBot.css';
 import { CSSTransition } from 'react-transition-group';
-import { useChat } from '../hooks/useChat';
+import { useGeminiChat } from '../hooks/useGeminiChat'; // <-- CAMBIO AQUÍ
 import { chatConfig } from '../config/chatStyles';
 import { validateEcuadorianId, formatPhoneNumber } from '../utils/ecuadorianIdValidator';
 import { UserInfo } from '../types/chat';
 import LogoAlemana from '../assets/LogoAlemana.svg';
 
-// Componente del formulario como mensaje
+// El componente UserFormMessage no necesita cambios, es igual.
 const UserFormMessage: React.FC<{
   onSubmit: (userInfo: UserInfo) => void;
 }> = ({ onSubmit }) => {
@@ -105,8 +105,9 @@ const UserFormMessage: React.FC<{
   );
 };
 
+
 const ChatBot: React.FC = () => {
-  const { state, sendMessage, setUserInfo, toggleChat } = useChat();
+  const { state, sendMessage, setUserInfo, toggleChat } = useGeminiChat(); // <-- CAMBIO AQUÍ
   const [input, setInput] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const nodeRef = useRef(null);
@@ -204,6 +205,7 @@ const ChatBot: React.FC = () => {
                 <div 
                   key={index} 
                   className={`${chatConfig.components.message.container} ${
+                    // <-- CAMBIO AQUÍ: 'model' es el rol del bot
                     msg.role === 'user' ? 'justify-end' : 'justify-start'
                   }`}
                 >
@@ -211,6 +213,7 @@ const ChatBot: React.FC = () => {
                     className={`${chatConfig.components.message.content} ${
                       msg.role === 'user' 
                         ? `${chatConfig.colors.message.user.bg} ${chatConfig.colors.message.user.text}`
+                        // <-- CAMBIO AQUÍ: 'model' usa los estilos del bot
                         : `${chatConfig.colors.message.bot.bg} ${chatConfig.colors.message.bot.border} text-white`
                     }`}
                   >
