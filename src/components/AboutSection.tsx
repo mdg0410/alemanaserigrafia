@@ -49,7 +49,7 @@ const AboutSection = () => {
 
   const stats = [
     { value: "33+", label: "Años de Experiencia", icon: faClock },
-    { value: "2000+", label: "Clientes Satisfechos", icon: faUsers },
+    { value: "20000+", label: "Clientes Satisfechos", icon: faUsers },
     { value: "100+", label: "Cursos y Capacitaciones", icon: faAward }
   ];
 

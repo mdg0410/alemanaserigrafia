@@ -12,7 +12,8 @@ import {
   faLinkedin 
 } from '@fortawesome/free-brands-svg-icons';
 
-const Footer = () => {  const socialLinks = [
+const Footer = () => {
+  const socialLinks = [
     { icon: faFacebook, href: 'https://www.facebook.com/alemanadeserigrafia/', label: 'Facebook' },
     { icon: faInstagram, href: 'https://www.instagram.com/alemana_serigrafia/', label: 'Instagram' },
     { icon: faTiktok, href: 'https://www.tiktok.com/@alemana_serigrafia', label: 'TikTok' },
@@ -34,129 +35,131 @@ const Footer = () => {  const socialLinks = [
       </div>
 
       <div className="container-custom py-16">
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-12">
-          {/* Información de la empresa */}
+        {/* Bloque principal: Direcciones | Horarios | Síguenos */}
+        <div className="grid md:grid-cols-3 gap-12 lg:gap-16 mb-12">
+          
+          {/* Direcciones */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="space-y-4"
+            className="space-y-6"
           >
-            <motion.h3 
-              className="text-2xl font-bold text-secondary mb-6"
-              whileHover={{ scale: 1.05 }}
-            >
-              Alemana de Serigrafía
-            </motion.h3>            <div className="space-y-3">
-              <p className="flex items-center gap-3">
-                <FontAwesomeIcon icon={faMapMarkerAlt} className="text-secondary" />
+            <h3 className="text-2xl font-bold text-secondary mb-6">Direcciones</h3>
+            
+            {/* Matriz */}
+            <div className="mb-4">
+              <p className="font-semibold text-yellow-400 mb-2">Matriz</p>
+              <p className="flex items-start gap-3 text-sm leading-relaxed">
+                <FontAwesomeIcon icon={faMapMarkerAlt} className="text-secondary mt-1" />
                 <span>Av. Eloy Alfaro, Quito 170144</span>
               </p>
-              <p className="flex items-center gap-3">
+            </div>
+            
+            {/* Sucursal Sur */}
+            <div className="mb-4">
+              <p className="font-semibold text-yellow-400 mb-2">Sucursal Sur</p>
+              <p className="flex items-start gap-3 text-sm leading-relaxed">
+                <FontAwesomeIcon icon={faMapMarkerAlt} className="text-secondary mt-1" />
+                <span>C.C. El Dorado Plaza, Av. Pedro Vicente Maldonado S28-195, Quito 170131</span>
+              </p>
+            </div>
+            
+            {/* Contacto */}
+            <div className="space-y-3 pt-2">
+              <p className="flex items-center gap-3 text-sm">
                 <FontAwesomeIcon icon={faPhone} className="text-secondary" />
                 <span>+593 96 867 6893 / +593 98 611 2559</span>
               </p>
-              <p className="flex items-center gap-3">
+              <p className="flex items-center gap-3 text-sm">
                 <FontAwesomeIcon icon={faEnvelope} className="text-secondary" />
                 <span>ventas1@inkgraph.net</span>
               </p>
             </div>
           </motion.div>
 
-          {/* Enlaces rápidos */}
+          {/* Horarios */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="space-y-4"
+            className="space-y-6"
           >
-            <h3 className="text-2xl font-bold text-secondary mb-6">
-              Enlaces Rápidos
-            </h3>
-            <ul className="space-y-3">
-              {quickLinks.map((link) => (
-                <motion.li key={link.name} whileHover={{ x: 5 }}>
-                  <a 
-                    href={link.href}
-                    className="hover:text-secondary transition-colors flex items-center gap-2"
-                  >
-                    <span className="text-secondary">›</span>
-                    {link.name}
-                  </a>
-                </motion.li>
-              ))}
+            <h3 className="text-2xl font-bold text-secondary mb-6">Horarios</h3>
+            <ul className="space-y-4">
+              <li className="flex justify-between items-center py-1">
+                <span>Lunes - Viernes:</span>
+                <span className="text-yellow-400 font-semibold">8:00 - 17:30</span>
+              </li>
+              <li className="flex justify-between items-center py-1">
+                <span>Sábado:</span>
+                <span className="text-yellow-400 font-semibold">9:00 - 13:00</span>
+              </li>
+              <li className="flex justify-between items-center py-1">
+                <span>Domingo:</span>
+                <span className="text-red-400 font-semibold">Cerrado</span>
+              </li>
             </ul>
           </motion.div>
 
-          {/* Horario de atención */}
+          {/* Síguenos */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.4 }}
-            className="space-y-4"
+            className="space-y-6"
           >
-            <h3 className="text-2xl font-bold text-secondary mb-6">
-              Horario de Atención
-            </h3>            <ul className="space-y-3">
-              <li className="flex justify-between">
-                <span>Lunes - Viernes:</span>
-                <span className="text-secondary">8:00 - 17:30</span>
-              </li>
-              <li className="flex justify-between">
-                <span>Sábado:</span>
-                <span className="text-secondary">9:00 - 13:00</span>
-              </li>
-              <li className="flex justify-between">
-                <span>Domingo:</span>
-                <span className="text-secondary">Cerrado</span>
-              </li>
-            </ul>
-          </motion.div>
-
-          {/* Redes sociales */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.6 }}
-            className="space-y-4"
-          >
-            <h3 className="text-2xl font-bold text-secondary mb-6">
-              Síguenos
-            </h3>
-            <div className="flex gap-4">
+            <h3 className="text-2xl font-bold text-yellow-400 mb-6 animate-pulse">Síguenos</h3>
+            <div className="flex gap-5 justify-center md:justify-start">
               {socialLinks.map((social) => (
                 <motion.a
                   key={social.label}
                   href={social.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-10 h-10 rounded-full bg-primary/30 flex items-center justify-center hover:bg-secondary hover:text-dark transition-all duration-300"
+                  className="w-12 h-12 rounded-full bg-secondary flex items-center justify-center hover:bg-yellow-400 hover:text-dark transition-all duration-300 shadow-lg border-2 border-yellow-400 text-white"
                   whileHover={{ scale: 1.2, rotate: 360 }}
                   whileTap={{ scale: 0.9 }}
                   aria-label={social.label}
                 >
-                  <FontAwesomeIcon icon={social.icon} />
+                  <FontAwesomeIcon icon={social.icon} size="lg" />
                 </motion.a>
               ))}
             </div>
           </motion.div>
         </div>
 
-        {/* Copyright */}
-        <motion.div 
-          className="border-t border-gray-800 mt-12 pt-8 text-center"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
+        {/* Enlaces rápidos horizontales */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.8 }}
+          transition={{ duration: 0.6, delay: 0.6 }}
+          className="border-t border-white/20 pt-8"
         >
-          <p className="text-gray-400">
-            © {new Date().getFullYear()} Alemana de Serigrafía. Todos los derechos reservados.
-          </p>
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            {/* Enlaces rápidos */}
+            <div className="flex flex-wrap justify-center md:justify-start gap-6">
+              {quickLinks.map((link) => (
+                <a 
+                  key={link.name}
+                  href={link.href}
+                  className="hover:text-yellow-400 transition-colors font-semibold px-3 py-1 rounded-md hover:bg-yellow-400/10"
+                >
+                  {link.name}
+                </a>
+              ))}
+            </div>
+            
+            {/* Copyright */}
+            <div className="text-center md:text-right text-sm text-white/70">
+              <p>© {new Date().getFullYear()} Alemana de Serigrafía. Todos los derechos reservados.</p>
+              <p className="mt-1">Desarrollado por <a href="https://mdg.studio" className="text-secondary hover:underline">mdg.studio</a></p>
+            </div>
+          </div>
         </motion.div>
       </div>
     </footer>

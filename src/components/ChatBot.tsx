@@ -1,261 +1,88 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import './ChatBot.css';
-import { CSSTransition } from 'react-transition-group';
-import { useGeminiChat } from '../hooks/useGeminiChat'; // <-- CAMBIO AQUÍ
-import { chatConfig } from '../config/chatStyles';
-import { validateEcuadorianId, formatPhoneNumber } from '../utils/ecuadorianIdValidator';
-import { UserInfo } from '../types/chat';
 import LogoAlemana from '../assets/LogoAlemana.svg';
 
-// El componente UserFormMessage no necesita cambios, es igual.
-const UserFormMessage: React.FC<{
-  onSubmit: (userInfo: UserInfo) => void;
-}> = ({ onSubmit }) => {
-  const [formData, setFormData] = useState({
-    name: '',
-    id: '',
-    email: '',
-    phone: '',
-  });
-  const [errors, setErrors] = useState({
-    name: '',
-    id: '',
-    email: '',
-    phone: '',
-  });
-
-  const validateForm = () => {
-    const newErrors = {
-      name: !formData.name ? 'El nombre es requerido' : '',
-      id: !validateEcuadorianId(formData.id) ? 'Cédula inválida' : '',
-      email: !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email) ? 'Email inválido' : '',
-      phone: !/^\d{10}$/.test(formData.phone.replace(/\D/g, '')) ? 'Teléfono inválido' : '',
-    };
-    setErrors(newErrors);
-    return !Object.values(newErrors).some(error => error);
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (validateForm()) {
-      try {
-        onSubmit({
-          ...formData,
-          phone: formatPhoneNumber(formData.phone),
-        });
-      } catch (error) {
-        console.error('Error al enviar el formulario:', error);
-      }
-    }
-  };
-
-  return (
-    <div className={`${chatConfig.components.message.container} justify-start`}>
-      <div className={`${chatConfig.colors.message.bot.bg} ${chatConfig.colors.message.bot.border} p-4 rounded-lg w-full max-w-[90%]`}>
-        <form onSubmit={handleSubmit} className="space-y-3">
-          <div>
-            <label className="text-white/90 text-sm mb-1 block">Nombre completo</label>
-            <input
-              type="text"
-              value={formData.name}
-              onChange={e => setFormData(prev => ({ ...prev, name: e.target.value }))}
-              className={`${chatConfig.components.input.base} ${chatConfig.components.input.focus} w-full`}
-            />
-            {errors.name && <span className="text-red-400 text-xs">{errors.name}</span>}
-          </div>
-          <div>
-            <label className="text-white/90 text-sm mb-1 block">Cédula</label>
-            <input
-              type="text"
-              value={formData.id}
-              onChange={e => setFormData(prev => ({ ...prev, id: e.target.value }))}
-              className={`${chatConfig.components.input.base} ${chatConfig.components.input.focus} w-full`}
-            />
-            {errors.id && <span className="text-red-400 text-xs">{errors.id}</span>}
-          </div>
-          <div>
-            <label className="text-white/90 text-sm mb-1 block">Email</label>
-            <input
-              type="email"
-              value={formData.email}
-              onChange={e => setFormData(prev => ({ ...prev, email: e.target.value }))}
-              className={`${chatConfig.components.input.base} ${chatConfig.components.input.focus} w-full`}
-            />
-            {errors.email && <span className="text-red-400 text-xs">{errors.email}</span>}
-          </div>
-          <div>
-            <label className="text-white/90 text-sm mb-1 block">Teléfono</label>
-            <input
-              type="tel"
-              value={formData.phone}
-              onChange={e => setFormData(prev => ({ ...prev, phone: e.target.value }))}
-              className={`${chatConfig.components.input.base} ${chatConfig.components.input.focus} w-full`}
-            />
-            {errors.phone && <span className="text-red-400 text-xs">{errors.phone}</span>}
-          </div>
-          <button
-            type="submit"
-            className="w-full bg-gradient-to-r from-[#4B0082] to-[#DAA520] text-white py-2 rounded-md hover:opacity-90 transition-opacity mt-4"
-          >
-            Enviar
-          </button>
-        </form>
-      </div>
-    </div>
-  );
-};
-
-
 const ChatBot: React.FC = () => {
-  const { state, sendMessage, setUserInfo, toggleChat } = useGeminiChat(); // <-- CAMBIO AQUÍ
-  const [input, setInput] = useState('');
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-  const nodeRef = useRef(null);
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  // Número de WhatsApp (puedes cambiarlo más tarde)
+  const WHATSAPP_NUMBER = '593968676893';
+  
+  // Mensaje predefinido que empieza con "Hola"
+  const PREDEFINED_MESSAGE = 'Hola, estoy interesado en los productos y servicios de Alemana Serigrafía. ¿Podrían darme más información?';
+
+  // Estados para el texto flotante
+  const [showFloatingText, setShowFloatingText] = useState(false);
+  const [messageIndex, setMessageIndex] = useState(0);
+
+  // Mensajes dinámicos que aparecerán
+  const floatingMessages = [
+    "💬 ¡Pregúntanos sobre serigrafía!",
+    "🛒 ¿Necesitas materiales?",
+    "🎨 ¡Cotiza tu proyecto!",
+    "📞 ¡Estamos aquí para ayudarte!",
+    "✨ ¡Consulta nuestros productos!",
+    "🚀 ¡Hablemos de tu idea!"
+  ];
+
+  const redirectToWhatsApp = () => {
+    const isMobile = /Android|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i.test(navigator.userAgent);
+    const encodedMsg = encodeURIComponent(PREDEFINED_MESSAGE);
+    const whatsappUrl = isMobile
+      ? `https://wa.me/${WHATSAPP_NUMBER}?text=${encodedMsg}`
+      : `https://web.whatsapp.com/send?phone=${WHATSAPP_NUMBER}&text=${encodedMsg}`;
+    
+    window.open(whatsappUrl, '_blank');
+  };
 
   useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth <= 768);
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    const showMessage = () => {
+      setShowFloatingText(true);
+      
+      // Ocultar el mensaje después de 5 segundos
+      setTimeout(() => {
+        setShowFloatingText(false);
+      }, 5000);
+      
+      // Cambiar al siguiente mensaje
+      setMessageIndex((prev) => (prev + 1) % floatingMessages.length);
+    };
+
+    // Mostrar el primer mensaje después de 10 segundos de carga
+    const initialTimer = setTimeout(showMessage, 5000);
+
+    // Luego mostrar cada 2 minutos (120000 ms)
+    const intervalTimer = setInterval(showMessage, 15000);
+
+    return () => {
+      clearTimeout(initialTimer);
+      clearInterval(intervalTimer);
+    };
   }, []);
 
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [state.messages, state.isTyping, state.showForm]);
-
-  const handleOpenChat = () => {
-    if (!state.isOpen) {
-      toggleChat();
-    }
-  };
-
-  const handleCloseChat = () => {
-    if (state.isOpen) {
-      toggleChat();
-    }
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!input.trim()) return;
-    
-    try {
-      await sendMessage(input);
-      setInput('');
-    } catch (error) {
-      console.error('Error:', error);
-    }
-  };
-
-  const renderTypingIndicator = () => (
-    <div className={`${chatConfig.components.message.container} justify-start`}>
-      <div className={`${chatConfig.colors.message.bot.bg} ${chatConfig.colors.message.bot.border} p-3 rounded-lg`}>
-        <div className="flex space-x-2">
-          <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
-          <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
-          <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-        </div>
-      </div>
-    </div>
-  );
-
-  const chatWindowClass = isMobile
-    ? chatConfig.layout.chatWindow.mobile
-    : chatConfig.layout.chatWindow.desktop;
-
   return (
-    <div className={chatConfig.layout.wrapper}>
-      <div className={chatConfig.layout.container}>
-        {!state.isOpen && (
-          <div className={chatConfig.layout.chatButton.wrapper}>
-            <button
-              onClick={handleOpenChat}
-              className={`${chatConfig.components.button.base} ${chatConfig.layout.chatButton.dimensions} ${chatConfig.components.button.gradient.closed}`}
-            >
-              <img src={LogoAlemana} alt="Chat" className="w-8 h-8" />
-            </button>
+    <div className="fixed bottom-8 right-8 z-50">
+      {/* Texto flotante */}
+      {showFloatingText && (
+        <div className="floating-message absolute bottom-20 right-2 bg-white text-gray-800 px-3 py-2 rounded-lg shadow-lg border-2 border-purple-300 min-w-max max-w-xs">
+          <div className="relative text-center">
+            {floatingMessages[messageIndex]}
+            {/* Flecha hacia abajo */}
+            <div className="absolute top-full right-6 w-0 h-0 border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-purple-300"></div>
           </div>
-        )}
-
-        <CSSTransition
-          nodeRef={nodeRef}
-          in={state.isOpen}
-          timeout={300}
-          classNames={chatConfig.animations.chat}
-          unmountOnExit
-        >
-          <div 
-            ref={nodeRef}
-            className={`${chatWindowClass} bg-gradient-to-b ${chatConfig.colors.background} backdrop-blur-md flex flex-col shadow-xl ring-1 ring-white/10`}
-          >
-            {/* Header */}
-            <div className={chatConfig.layout.header}>
-              <h3 className="text-white font-semibold">Asistente Técnico</h3>
-              <button
-                onClick={handleCloseChat}
-                className="text-white hover:text-gray-300 transition-colors w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10"
-              >
-                <span className="text-2xl">×</span>
-              </button>
-            </div>
-
-            {/* Messages Area */}
-            <div className={chatConfig.layout.messages}>
-              {state.messages.map((msg, index) => (
-                <div 
-                  key={index} 
-                  className={`${chatConfig.components.message.container} ${
-                    // <-- CAMBIO AQUÍ: 'model' es el rol del bot
-                    msg.role === 'user' ? 'justify-end' : 'justify-start'
-                  }`}
-                >
-                  <div 
-                    className={`${chatConfig.components.message.content} ${
-                      msg.role === 'user' 
-                        ? `${chatConfig.colors.message.user.bg} ${chatConfig.colors.message.user.text}`
-                        // <-- CAMBIO AQUÍ: 'model' usa los estilos del bot
-                        : `${chatConfig.colors.message.bot.bg} ${chatConfig.colors.message.bot.border} text-white`
-                    }`}
-                  >
-                    {msg.content}
-                  </div>
-                </div>
-              ))}
-
-              {!state.isFormCompleted && state.showForm && (
-                <UserFormMessage onSubmit={setUserInfo} />
-              )}
-
-              {state.isTyping && renderTypingIndicator()}
-
-              <div ref={messagesEndRef} />
-            </div>
-
-            {/* Input Area */}
-            {state.isFormCompleted && (
-              <div className="p-4 border-t border-purple-700/30 bg-gradient-to-b from-transparent to-purple-900/50 backdrop-blur-sm">
-                <form onSubmit={handleSubmit} className="flex gap-2">
-                  <input
-                    type="text"
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    placeholder="Escribe tu mensaje..."
-                    className={`${chatConfig.components.input.base} ${chatConfig.components.input.focus} flex-1`}
-                    disabled={state.requestSolved}
-                  />
-                  <button
-                    type="submit"
-                    className="px-4 py-2 bg-gradient-to-r from-[#4B0082] to-[#DAA520] text-white rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
-                    disabled={!input.trim() || state.requestSolved}
-                  >
-                    Enviar
-                  </button>
-                </form>
-              </div>
-            )}
-          </div>
-        </CSSTransition>
-      </div>
+        </div>
+      )}
+      
+      {/* Botón principal */}
+      <button
+        onClick={redirectToWhatsApp}
+        className="whatsapp-button w-16 h-16 bg-gradient-to-r from-purple-600 to-yellow-500 rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 flex items-center justify-center border-2 border-white"
+        aria-label="Contactar por WhatsApp"
+      >
+        <img 
+          src={LogoAlemana} 
+          alt="Contacto WhatsApp" 
+          className="w-10 h-10 drop-shadow-lg"
+        />
+      </button>
     </div>
   );
 };
