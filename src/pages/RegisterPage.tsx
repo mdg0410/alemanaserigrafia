@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
@@ -20,7 +20,8 @@ import type { RegisterFormData } from '../types/database';
 import { CLIENT_SEGMENTS } from '../types/database';
 
 const RegisterPage = () => {
-  const { phone: encryptedPhone } = useParams<{ phone: string }>();
+  const [searchParams] = useSearchParams();
+  const encryptedPhone = searchParams.get('data');
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState<RegisterFormData>({
