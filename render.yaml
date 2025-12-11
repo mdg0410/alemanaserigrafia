@@ -2,7 +2,7 @@ services:
   - type: web
     name: alemanaserigrafia
     env: static
-    buildCommand: pnpm install && pnpm run build
+    buildCommand: npm install -g pnpm && pnpm install && pnpm run build:linux
     staticPublishPath: ./dist
     routes:
       - type: rewrite
