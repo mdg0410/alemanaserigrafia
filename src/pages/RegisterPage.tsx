@@ -15,7 +15,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { validateEcuadorianId } from '../utils/ecuadorianIdValidator';
 import { decryptAES, isValidPhoneNumber } from '../utils/encryption';
-import { registerClient, findContactByPhone } from '../services/supabaseService';
+import { registerClient } from '../services/supabaseService';
 import type { RegisterFormData } from '../types/database';
 import { CLIENT_SEGMENTS } from '../types/database';
 
@@ -70,19 +70,7 @@ const RegisterPage = () => {
       }
 
       setDecryptedPhone(phone);
-
-      try {
-        // Verificar si ya existe un contacto con perfil
-        const contact = await findContactByPhone(phone);
-        if (contact) {
-          // El contacto existe, verificamos si ya tiene perfil en el flujo de registro
-          console.log('Contacto encontrado:', contact.id);
-        }
-      } catch (error) {
-        console.error('Error checking phone:', error);
-      } finally {
-        setIsCheckingPhone(false);
-      }
+      setIsCheckingPhone(false);
     };
 
     checkPhone();
