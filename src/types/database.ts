@@ -30,10 +30,12 @@ export type ClientSegment =
   | 'wholesale'
   | 'corporate'
   | 'premium'
-  | 'new';
+  | 'new'
+  | 'web_lead';
 
 export const CLIENT_SEGMENTS: { value: ClientSegment; label: string }[] = [
   { value: 'new', label: 'Nuevo Cliente' },
+  { value: 'web_lead', label: 'Web Lead' },
   { value: 'retail', label: 'Retail / Minorista' },
   { value: 'wholesale', label: 'Mayorista' },
   { value: 'corporate', label: 'Corporativo / Empresa' },

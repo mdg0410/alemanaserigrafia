@@ -164,15 +164,31 @@ const RegisterPage = () => {
     setErrorMessage('');
 
     try {
-      await registerClient(decryptedPhone, formData);
-      setSubmitStatus('success');
+      const response = await registerClient(decryptedPhone, formData);
+      
+      if (response.success) {
+        setSubmitStatus('success');
+        // Opcional: redirigir después de un tiempo
+        setTimeout(() => {
+          navigate('/');
+        }, 2000);
+      } else {
+        setSubmitStatus('error');
+        setErrorMessage(response.message || 'Error al registrar. Por favor intenta nuevamente.');
+      }
     } catch (error) {
       if (error instanceof Error) {
-        if (error.message === 'PROFILE_EXISTS') {
+        setSubmitStatus('error');
+        
+        // Detectar errores específicos
+        if (error.message.includes('PROFILE_EXISTS')) {
           setSubmitStatus('profile_exists');
           setErrorMessage('Ya existe un perfil registrado con este número de teléfono');
+        } else if (error.message.includes('cedula')) {
+          setErrorMessage('Esta cédula/RUC ya está registrada');
+        } else if (error.message.includes('email')) {
+          setErrorMessage('Este correo ya está registrado');
         } else {
-          setSubmitStatus('error');
           setErrorMessage(error.message || 'Error al registrar. Por favor intenta nuevamente.');
         }
       } else {
